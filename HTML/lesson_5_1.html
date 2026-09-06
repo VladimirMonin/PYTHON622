@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./lesson_5_1.css" />
+    <title>Пример вложенных Flex</title>
+  </head>
+  <body>
+    <!-- div.container>div.card*6>div.header+div.image>img^div.card-text -->
+    <!-- div.container>div.card*6>div.header>h3{Карточка $}^div.image>img^div.card-text -->
+     <!-- div.container>div.card*6>div.header>h3{Карточка $}^div.image>img^div.card-text{Текст карточки $} -->
+  </body>
+  <div class="container">
+    <div class="card">
+      <div class="header"><h3>Дубай</h3></div>
+      <div class="image"><img src="./tur-images/dubai.webp" alt="" /></div>
+      <div class="card-text">
+        Невероятный Дубай! Главное не селитесь в отеле "Парус"!
+      </div>
+      <div class="buttons-group">
+        <button class="btn">Подробнее</button>
+        <button class="btn">Забронировать</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="header"><h3>Катар</h3></div>
+      <div class="image"><img src="./tur-images/katar.webp" alt="" /></div>
+      <div class="card-text">
+        Божественный Катар. Но лучше пока туда не ездить!
+      </div>
+    </div>
+    <div class="card">
+      <div class="header"><h3>Иран</h3></div>
+      <div class="image"><img src="./tur-images/iran.webp" alt="" /></div>
+      <div class="card-text">
+        Удивительный Иран. Где женщина - лучший друг человека!
+      </div>
+    </div>
+    <div class="card">
+      <div class="header"><h3>Тайланд</h3></div>
+      <div class="image"><img src="./tur-images/tai.webp" alt="" /></div>
+      <div class="card-text">
+        Тайланд. Круто! Но очень много китайцев в феврале!
+      </div>
+    </div>
+    <div class="card">
+      <div class="header"><h3>Китай</h3></div>
+      <div class="image"><img src="./tur-images/china.webp" alt="" /></div>
+      <div class="card-text">Китай! Очень много китайцев... Всегда...</div>
+    </div>
+    <div class="card">
+      <div class="header"><h3>Япония</h3></div>
+      <div class="image"><img src="./tur-images/japan.webp" alt="" /></div>
+      <div class="card-text">
+        Япония! Страна восходящего солнца и технологий! И тоже, в феврале очень
+        много китайцев.
+      </div>
+    </div>
+  </div>
+</html>

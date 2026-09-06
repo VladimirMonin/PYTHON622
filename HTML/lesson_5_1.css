@@ -1,0 +1,87 @@
+body {
+  background-color: #ebe1ec;
+}
+
+div.container {
+  display: flex;
+  gap: 10px; /* Расстояние между флекс элементами */
+  border: 1px solid black;
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+div.card {
+  background-color: lightblue;
+  border: 1px solid black;
+  border-radius: 10px;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 300px;
+  height: 450px;
+}
+
+div.header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+div.image {
+    overflow: hidden;
+    height: 50%;
+    width: 100%;
+}
+
+/* ДВА СВОЙСТВА ДЛЯ КАРТИНОК
+object-fit - позволяет контролировать, как изображение будет вписываться в контейнер.
+- cover - изображение будет масштабироваться так, чтобы полностью покрыть контейнер, сохраняя пропорции. Часть изображения может быть обрезана, если его пропорции не совпадают с пропорциями контейнера.
+- contain - изображение будет масштабироваться так, чтобы полностью поместиться в контейнер, сохраняя пропорции. В этом случае могут появиться пустые области, если пропорции изображения не совпадают с пропорциями контейнера.
+- fill - изображение будет растягиваться, чтобы полностью заполнить контейнер, не сохраняя пропорции. Это может привести к искажению изображения.
+
+Второе object-position - позволяет контролировать позицию изображения внутри контейнера, когда используется object-fit: cover или contain. Например, можно указать object-position: center; для центрирования изображения, или object-position: top left; для позиционирования изображения в верхнем левом углу контейнера.
+
+*/
+
+div.image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+div.card-text {
+  margin-top: 30px;
+  text-align: center;
+}
+
+div.buttons-group {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn {
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+@media (max-width: 600px) {
+  div.container {
+    width: 100%;
+  }
+}
+
+@media (max-width: 400px) {
+    div.card {
+        width: 100%;
+        height: auto;
+    }
+}
