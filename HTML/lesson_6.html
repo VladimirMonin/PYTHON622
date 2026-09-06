@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lesson 6 - Forms</title>
+  </head>
+  <body>
+    <h1>Знакомство с формами в HTML</h1>
+    <h2>Пример простой формы без <code>name</code> атрибута</h2>
+    <!-- form>input:text -->
+    <!-- http://127.0.0.1:5500/lesson_6.html? -->
+    <form>
+      <input type="text" />
+    </form>
+    <h2>Пример жизнеспособной формы с <code>name</code> атрибутом и кнопкой</h2>
+    <!-- form>input:text+button{ТЫЦ} -->
+    <!-- http://127.0.0.1:5500/lesson_6.html?data=fat+pink+elephants -->
+    <form action="">
+      <input type="text" name="data" />
+      <button>ТЫЦ</button>
+    </form>
+    <h2>Пример формы с несколькими полями</h2>
+    <!-- form>input:text[name=first_name]+input:text[name=second_name]+button{ТЫЦ} -->
+    <!-- http://127.0.0.1:5500/
+      lesson_6.html
+      ?
+      first_name=Artur
+      &
+      second_name=Pirojkov
+      -->
+    <form action="">
+      <input type="text" name="first_name" />
+      <input type="text" name="second_name" />
+      <button>ТЫЦ</button>
+    </form>
+    <h2>Пример формы юзернейм пароль с различными типами полей</h2>
+    <!-- form>input:text[name=username]+input:password[name=password]+button{ВХОД} -->
+    <!-- http://127.0.0.1:5500/lesson_6.html?username=Cake&password=12345 -->
+    <form action="">
+      <input type="text" name="username" placeholder="Юзернейм" />
+      <input type="password" name="password" placeholder="Пароль" />
+      <button>ВХОД</button>
+    </form>
+    <h2>Пример Логин формы с post и альтернативным URL</h2>
+    <!-- form[action=/login method=post]>input:text[name=username]+input:password[name=password]+button{ВХОД} -->
+    <form action="/login" method="post">
+      <input type="text" name="username" id="" placeholder="Юзернейм" />
+      <input type="password" name="password" id="" placeholder="Пароль" />
+      <button>ВХОД</button>
+    </form>
+    <h2>Типы input</h2>
+    <ul>
+      <li><code>text</code> - однострочное текстовое поле</li>
+      <li><code>password</code> - поле для ввода пароля</li>
+      <li><code>email</code> - поле для ввода email</li>
+      <li><code>number</code> - поле для ввода чисел</li>
+      <li><code>date | time | datetime</code> - поле для ввода даты</li>
+      <li><code>checkbox</code> - флажок многие из многих</li>
+      <li><code>radio</code> - переключатель один из многих</li>
+      <li><code>submit</code> - кнопка отправки формы</li>
+      <li><code>reset</code> - кнопка сброса формы</li>
+      <li><code>tel</code> - поле для ввода телефонного номера</li>
+      <li><code>color</code> - поле для выбора цвета</li>
+      <li><code>file</code> - поле для загрузки файлов</li>
+      <li><code>range</code> - ползунок для выбора значения из диапазона</li>
+    </ul>
+    <!-- Пример формы записи на консультацию к тарологу -->
+    <form method="post">
+      <input
+        type="text"
+        name="user-name"
+        placeholder="Ваше имя"
+        required
+        minlength="3"
+      />
+      <input type="email" name="user-email" placeholder="Ваш email" required />
+      <!-- TODO - РЕГУЛЯРКА ДЛЯ ТЕЛЕФОНА - чтобы не отправлять ЧЕБУРЕКИ!!!!!!!!!!)) -->
+      <input type="tel" name="user-phone" placeholder="Ваш телефон" required />
+      <!-- Дата рождения -->
+      <input type="date" name="user-birthdate" />
+      <!-- Option знак зодиака -->
+        <select name="user-zodiac" required>
+            <option value="">Выберите знак зодиака</option>
+            <option value="aries">Овен</option>
+            <option value="taurus">Телец</option>
+            <option value="gemini">Близнецы</option>
+            <option value="cancer">Рак</option>
+            <option value="leo">Лев</option>
+            <option value="virgo">Дева</option>
+            <option value="libra">Весы</option>
+            <option value="scorpio">Скорпион</option>
+            <option value="sagittarius">Стрелец</option>
+            <option value="capricorn">Козерог</option>
+            <option value="aquarius">Водолей</option>
+            <option value="pisces">Рыбы</option>
+      <!-- Дата и время консультации -->
+
+<!-- ```html
+<label for="appointment">Выберите время записи (с 1 по 10 октября):</label>
+
+<input type="datetime-local"
+       id="appointment"
+       name="appointment"
+       min="2023-10-01T00:00"
+       max="2023-10-10T23:59">
+``` -->
+
+<!-- **Важные нюансы:**
+1.  **Формат значения:** Для `datetime-local` значение должно строго соответствовать формату `YYYY-MM-DDThh:mm` (например, `2023-12-31T12:00`).
+2.  **Валидация:** Эти атрибуты ограничивают выбор в интерфейсе календаря (делают неактивными даты вне диапазона), но для надежности всегда требуется дополнительная проверка данных на стороне сервера (backend).
+3.  **Атрибут `step`:** Также можно использовать атрибут `step` для указания интервала выбора (например, в секундах), если нужно ограничить выбор времени кратными отрезками.
+
+атрибуты даты
+- `min` - минимальная дата и время
+- `max` - максимальная дата и время
+- `step` - шаг выбора (например, 3600 для выбора только целых часов)
+
+
+-->
+      <input
+        type="date"
+        name="consultation-date"
+        min="2026-03-21"
+        max="2026-03-31"
+      />
+        <input
+            type="time"
+            name="consultation-time"
+    
+            min="09:00"
+            max="18:00"
+            step="3600"
+        />
+
+        <!-- Дополнительные услуги
+        - Расклад таро
+        - Бизнес прогноз
+        - Натальная карта
+        - Анализ совместимости --> 
+        <label for="taro_spread">Расклад таро</label>
+        <input type="checkbox" name="services" id="taro_spread" value="taro_spread" />
+        <label for="business_forecast">Бизнес прогноз</label>
+        <input type="checkbox" name="services" id="business_forecast" value="business_forecast" />
+        <label for="natal_chart">Натальная карта</label>
+        <input type="checkbox" name="services" id="natal_chart" value="natal_chart" />
+        <label for="compatibility_analysis">Анализ совместимости</label>
+        <input type="checkbox" name="services" id="compatibility_analysis" value="compatibility_analysis" />
+
+        <!-- Радикокнопка  -->
+        <p>Выберите тип консультации:</p>
+        <label for="personal">Личная консультация</label>
+        <input type="radio" name="consultation_type" id="personal" value="personal" required />
+        <label for="online">Онлайн консультация</label>
+        <input type="radio" name="consultation_type" id="online" value="online" required />
+        <button type="submit">Записаться</button>
+
+
+    </form>
+  </body>
+</html>
