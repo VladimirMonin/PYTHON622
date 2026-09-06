@@ -1,0 +1,23 @@
+body {
+  background-color: rgb(202, 242, 175);
+}
+
+img {
+  width: 200px;
+}
+
+h1 {
+  text-align: center;
+}
+
+h2 {
+  color: brown;
+}
+
+.dark-green-text {
+  color: darkgreen;
+}
+
+.centered-text {
+  text-align: center;
+}
