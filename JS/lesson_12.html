@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lesson 12 - События в JavaScript</title>
+    <style>
+      #redSquare,
+      #greenSquare {
+        width: 100px;
+        height: 100px;
+        border: 1px solid black;
+      }
+      .blue {
+        background-color: blue;
+      }
+      .red {
+        background-color: red;
+      }
+      .green {
+        background-color: green;
+      }
+      .square {
+        width: 100px;
+        height: 100px;
+        border: 1px solid black;
+        color: brown;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>События в JavaScript</h1>
+    <h2>Вариант указания события в HTML</h2>
+    <div id="redSquare" class="red" onclick="changeColor()"></div>
+    <div id="greenSquare" class="green" onclick="changeColor2()"></div>
+    <h2>Пример нескольких обработчиков на HTML теге</h2>
+    <div
+      class="square"
+      onclick="squareOnClick()"
+      onmouseover="squareOnMouseOver()"
+      onmouseout="squareOnMouseOut()"
+    ></div>
+    <h2>Эксперименты с Listeners</h2>
+    <button id="alertButton">Показать alert</button>
+    <div>
+      <span>Текущее сообщение:</span> <span id="currentMessageParam"></span>
+    </div>
+    <!-- 4 кнопки "Настрок - В зависимости от того какая из них нажата - получаем разные алерты" -->
+     <input type="text" id="inputCustomMessage" placeholder="Введите свое сообщение" />
+    <p>Кнопки настроек</p>
+    <button id="alertParam1">Показать alert 1</button>
+    <button id="alertParam2">Показать alert 2</button>
+    <button id="alertParam3">Показать alert 3</button>
+    <button id="alertParam4">Показать свой вариант</button>
+    <script src="./lesson_12.js"></script>
+  </body>
+</html>
