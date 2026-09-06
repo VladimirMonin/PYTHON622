@@ -8,6 +8,8 @@ Lesson 24 - Логирование в Пайтон
 
 import logging
 from utils_24.polza_utils import request_api
+from logging.handlers import RotatingFileHandler
+
 
 logging.basicConfig(
     level=logging.DEBUG,  # Что будет логироваться. DEBUG - все сообщения, INFO - только информационные и выше, WARNING - предупреждения и выше, ERROR - ошибки и выше, CRITICAL - только критические ошибки
@@ -15,9 +17,9 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M:%S",  # Как форматируется дата
     handlers=[
         logging.StreamHandler(),  # вывод в консоль
-        logging.FileHandler(
-            "lesson_24.log", mode="a", encoding="utf-8"
-        ),  # вывод в файл
+        RotatingFileHandler(
+            "lesson_24.log", maxBytes=1024 * 1024 * 2, backupCount=3, encoding="utf-8"
+        ),  # вывод в файл с ротацией
     ],
 )
 
