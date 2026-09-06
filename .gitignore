@@ -1,0 +1,35 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Caches and tooling
+.mypy_cache/
+.ruff_cache/
+logs/
+*.log
+
+# Images (originals are kept locally; only WebP versions are committed)
+*.jpg
+*.jpeg
+*.png
+*.avif
+*.heic
+*.heif
+images/*
+!images/*.excalidraw
+
+# Fonts
+*.ttf
+*.woff
+*.woff2
+*.zip
+
+# Misc junk
+lesson_18.txtd

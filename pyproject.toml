@@ -1,0 +1,15 @@
+[project]
+name = "python622"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "openai>=2.44.0",
+    "tabulate>=0.10.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.1.0",
+]
