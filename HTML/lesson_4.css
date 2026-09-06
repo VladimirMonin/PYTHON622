@@ -1,0 +1,73 @@
+/* body {
+  font-family: "Roboto Flex";
+} */
+
+/* Вариант подключения woff2 ./fonts/ */
+
+@font-face {
+  font-family: "Roboto Flex";
+  src: url("./fonts/RobotoFlex.woff2");
+}
+
+body {
+  font-family: "Roboto Flex", sans-serif;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Tektur";
+}
+
+code {
+  font-family: "JetBrains Mono", monospace;
+}
+
+img {
+    max-width: 500px;
+    width: 50%;
+
+}
+
+/* Единицы измерения CSS */
+/* 
+px - пиксели
+% - проценты от родительского элемента
+vw, vh - проценты от ширины и высоты окна браузера в пикселях
+rem - пиксели размерш шрифта root element (HTML, обычно 16px)
+em - пиксели размер шрифта родительского элемента
+fr - доля свободного пространства в CSS Grid (Только для CSS Grid!)
+*/
+
+.box {
+    min-width: 200px;
+    max-width: 400px;
+    width: 50%;
+    min-height: 100px;
+    max-height: 200px;
+    height: 50vh;
+    background-color: lightblue;
+    border: 2px solid black;
+}
+
+/* Задаем rem */
+html {
+    font-size: 10px;
+}
+
+h1 {
+    font-size: 3rem; /* 30px */
+}
+
+h2 {
+    font-size: 2rem; /* 20px */
+}
+
+h3 {
+    font-size: 1.5rem; /* 15px */
+}
+
+p {
+    font-size: 1rem; /* 10px */
+}
+
