@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Запись на консультацию</title>
+    <link rel="stylesheet" href="./lesson_7.css" />
+  </head>
+  <body>
+    <h1>Запись на расклад таро</h1>
+    <form method="post" enctype="multipart/form-data">
+      <!-- label+input -->
+      <!-- Основная информация -->
+      <fieldset>
+        <legend>Основная информация</legend>
+        <div class="input-group">
+          <label for="user-name">Имя</label>
+          <input
+            type="text"
+            name="user-name"
+            id="user-name"
+            pattern="^[A-Za-zА-Яа-яЁё]{2,15}$"
+            title="Введите имя от 2 до 15 знаков"
+            required
+          />
+        </div>
+        <div class="input-group">
+          <label for="user-tel">Телефон</label>
+          <input
+            type="tel"
+            name="user-tel"
+            id="user-tel"
+            pattern="^(\+7|8)\d{10}$"
+            required
+            title="Введите номер телефона в формате +7XXXXXXXXXX или 8XXXXXXXXXX"
+          />
+        </div>
+        <div class="input-group">
+          <label for="user-email">Емейл</label>
+          <input
+            type="email"
+            name="user-email"
+            id="user-email"
+            pattern="^[a-zA-Z0-9._%+-]{1,32}@[a-zA-Z0-9.-]{1,32}\.[a-zA-Z]{2,10}$"
+            title="Введите корректный адрес электронной почты"
+          />
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Дополнительные услуги</legend>
+        <!-- Дополнительные услуги
+    - Расклад таро
+    - Бизнес прогноз
+    - Натальная карта
+    - Анализ совместимости 
+      -->
+        <div class="input-group checkbox-group">
+          <input type="checkbox" name="taro-spread" id="taro-spread" checked />
+          <label for="taro-spread">Расклад таро</label>
+          <input
+            type="checkbox"
+            name="business_forecast"
+            id="business_forecast"
+          />
+          <label for="business_forecast">Бизнес прогноз</label>
+        </div>
+        <div class="input-group checkbox-group">
+          <input type="checkbox" name="natal_chart" id="natal_chart" />
+          <label for="natal_chart">Натальная карта</label>
+          <input
+            type="checkbox"
+            name="compatibility_analysis"
+            id="compatibility_analysis"
+          />
+          <label for="compatibility_analysis">Анализ совместимости</label>
+        </div>
+        <p>Тип консультации</p>
+        <div class="input-group radio-group">
+          <input
+            type="radio"
+            name="consultation_type"
+            id="online"
+            value="online"
+            checked
+          />
+          <label for="online">Онлайн</label>
+        </div>
+        <div class="input-group radio-group">
+          <input
+            type="radio"
+            name="consultation_type"
+            id="offline"
+            value="offline"
+          />
+          <label for="offline">Оффлайн</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Дополнительная информация</legend>
+        <!-- Дополнительная информация -->
+        <!-- Фотография -->
+        <div class="input-group radio-group">
+          <label for="user-photo">Фотография</label>
+          <input
+            type="file"
+            name="user-photo"
+            id="user-photo"
+            accept=".jpg,.jpeg,.png,.avif,.heic,.heif,.webp"
+          />
+        </div>
+        <div class="input-group radio-group">
+          <label for="user-zodiac">Знак зодиака</label>
+          <select name="user-zodiac" id="user-zodiac">
+            <option value="">Выберите знак зодиака</option>
+            <option value="aries">Овен</option>
+            <option value="taurus">Телец</option>
+            <option value="gemini">Близнецы</option>
+            <option value="cancer">Рак</option>
+            <option value="leo">Лев</option>
+            <option value="virgo">Дева</option>
+            <option value="libra">Весы</option>
+            <option value="scorpio">Скорпион</option>
+            <option value="sagittarius">Стрелец</option>
+            <option value="capricorn">Козерог</option>
+            <option value="aquarius">Водолей</option>
+            <option value="pisces">Рыбы</option>
+          </select>
+        </div>
+        <div class="input-group radio-group">
+          <label for="favorite-color">Любимый цвет</label>
+          <input type="color" name="favorite-color" id="favorite-color" />
+        </div>
+      </fieldset>
+      <button>Записаться</button>
+    </form>
+  </body>
+</html>

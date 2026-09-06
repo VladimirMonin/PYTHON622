@@ -1,0 +1,239 @@
+/* ===== БАЗОВЫЕ СТИЛИ ===== */
+
+body {
+    /* Подключённый Google-шрифт Nunito для всей страницы */
+    font-family: 'Nunito', sans-serif;
+    /* Базовый размер текста */
+    font-size: 15px;
+}
+
+h1 {
+    /* Крупный заголовок страницы */
+    font-size: 22px;
+    /* Жирное начертание */
+    font-weight: 700;
+    /* Фиолетовый оттенок в тон форме */
+    color: rgb(80, 80, 140);
+}
+
+
+/* ===== ФОРМА ===== */
+
+form {
+    /* Фиксированная ширина */
+    width: 400px;
+    /* Центрирование по горизонтали */
+    margin: 0 auto;
+    /* Флексбокс: дочерние элементы идут колонкой */
+    display: flex;
+    flex-direction: column;
+    /* Промежуток между fieldset и кнопкой */
+    gap: 10px;
+    /* Тонкая рамка */
+    border: 1px solid rgb(211, 211, 243);
+    /* Внутренние отступы */
+    padding: 20px;
+    /* Скруглённые углы */
+    border-radius: 5px;
+    /* Мягкая тень под формой */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /* Светло-сиреневый фон */
+    background-color: rgb(235, 235, 244);
+}
+
+
+/* ===== FIELDSET И LEGEND ===== */
+
+fieldset {
+    /* Рамка вокруг каждой группы полей */
+    border: 1px solid rgb(211, 211, 243);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Вложенные fieldset чекбоксов и радиокнопок — без лишней рамки */
+fieldset.checkbox-grid,
+fieldset.radio-grid {
+    /* Снимаем рамку, чтобы не было двойного обрамления */
+    border: none;
+    padding: 4px 0 0 0;
+    margin: 0;
+}
+
+legend {
+    /* Чуть меньше основного текста */
+    font-size: 14px;
+    /* Полужирное начертание */
+    font-weight: 600;
+    /* Фиолетовый цвет, как у заголовка */
+    color: rgb(80, 80, 140);
+    /* Лёгкое разрежение букв */
+    letter-spacing: 0.3px;
+}
+
+
+/* ===== КНОПКА ===== */
+
+button {
+    /* Внутренние отступы для объёма */
+    padding: 12px;
+    /* Убираем стандартную рамку браузера */
+    border: none;
+    /* Скруглённые углы */
+    border-radius: 8px;
+    /* Фиолетово-синий фон в тон форме */
+    background-color: rgb(110, 110, 185);
+    /* Белый текст для контраста */
+    color: white;
+    /* Курсор-указатель при наведении */
+    cursor: pointer;
+    /* Крупнее — кнопка главный элемент действия */
+    font-size: 16px;
+    /* Жирное начертание */
+    font-weight: 700;
+    /* Явно задаём шрифт формы — браузер по умолчанию не наследует */
+    font-family: 'Nunito', sans-serif;
+    /* Лёгкое разрежение букв */
+    letter-spacing: 0.5px;
+    /* Плавные переходы для hover-эффекта: фон, тень, смещение */
+    transition: background-color 0.2s, box-shadow 0.2s, transform 0.15s;
+    /* Объёмная тень снизу — кнопка "парит" над формой */
+    box-shadow: 0 4px 12px rgba(110, 110, 185, 0.4);
+}
+
+button:hover {
+    /* Насыщеннее при наведении */
+    background-color: rgb(90, 90, 165);
+    /* Тень увеличивается — эффект поднятия */
+    box-shadow: 0 6px 18px rgba(90, 90, 165, 0.5);
+    /* Кнопка слегка поднимается вверх */
+    transform: translateY(-2px);
+}
+
+button:active {
+    /* При клике кнопка "вдавливается" вниз */
+    transform: translateY(1px);
+    /* Тень уменьшается — ощущение нажатия */
+    box-shadow: 0 2px 6px rgba(90, 90, 165, 0.4);
+}
+
+
+/* ===== СТРОКА LABEL + INPUT ===== */
+
+.input-group {
+    /* Флексбокс: label и поле в одну строку */
+    display: flex;
+    gap: 5px;
+    /* Вертикальное выравнивание по центру */
+    align-items: center;
+    /* Отступ снизу между строками */
+    margin-bottom: 5px;
+}
+
+.input-group label {
+    /* Фиксированная ширина — все label выровнены в единую колонку */
+    flex: 0 0 110px;
+    /* Текст не переносится */
+    white-space: nowrap;
+}
+
+
+/* ===== ЧЕКБОКСЫ ===== */
+
+.checkbox-grid {
+    /* Флексбокс с переносом — создаёт 2 колонки */
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.checkbox-item {
+    /* Флексбокс: чекбокс и подпись рядом */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* Ровно половина строки — два пункта в ряд */
+    width: 50%;
+    padding: 4px 0;
+    /* Скруглённые углы для подсветки при активации */
+    border-radius: 5px;
+    /* Плавная смена фона */
+    transition: background-color 0.2s;
+}
+
+/* Когда чекбокс отмечен — подсвечиваем весь блок */
+/* :has() проверяет, есть ли внутри .checkbox-item отмеченный input */
+.checkbox-item:has(input:checked) {
+    background-color: rgb(210, 210, 240);
+}
+
+input[type="checkbox"] {
+    /* accent-color меняет цвет галочки и рамки чекбокса */
+    accent-color: rgb(100, 100, 180);
+    /* Чуть крупнее стандартного 13px */
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+
+/* ===== РАДИОКНОПКИ ===== */
+
+.radio-grid {
+    /* Флексбокс: варианты стоят в ряд */
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.radio-item {
+    /* Флексбокс: радиокнопка и подпись рядом */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* Отступы вокруг для фона при выборе */
+    padding: 4px 10px 4px 4px;
+    border-radius: 5px;
+    /* Плавная смена фона */
+    transition: background-color 0.2s;
+}
+
+/* Когда радиокнопка выбрана — подсвечиваем блок */
+.radio-item:has(input:checked) {
+    background-color: rgb(210, 210, 240);
+}
+
+input[type="radio"] {
+    /* accent-color меняет цвет заливки выбранного варианта */
+    accent-color: rgb(100, 100, 180);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+
+/* ===== ТЕКСТОВЫЕ ПОЛЯ ===== */
+
+input[type="text"],
+input[type="email"],
+input[type="tel"] {
+    /* Внутренние отступы */
+    padding: 3px;
+    /* Рамка в тон форме */
+    border: 1px solid rgb(211, 211, 243);
+    border-radius: 5px;
+    /* Занимает всё оставшееся место в строке .input-group */
+    flex: 1;
+    margin-bottom: 5px;
+}
+
+/* Состояние поля, когда пользователь кликнул в него */
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="tel"]:focus {
+    /* Рамка окрашивается в фиолетовый */
+    border-color: rgb(136, 136, 190);
+    /* Мягкое свечение вокруг поля */
+    box-shadow: 0 0 5px rgba(136, 136, 190, 0.5);
+    /* Убираем стандартный синий outline браузера */
+    outline: none;
+}
