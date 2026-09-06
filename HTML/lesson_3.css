@@ -1,0 +1,78 @@
+/* 
+tag - селектор по тегу. Возможность сделать ВСЕ теги определенного вида
+.class - Универсальный атрибут который можно выдать любому тегу.
+tag.class - Сочетание тега и класса. Получим только те теги, которые имеют определенный класс.
+tag, tag2 - Воздействуем на несколько тегов сразу
+tag tag2 - Воздействуем на все tag2 которые являются  потомками любого уровня tag
+tag > tag2 - Воздействуем на все tag2 которые являются непосредственными потомками tag
+
+*/
+
+body {
+  background-color: rgb(202, 242, 175);
+}
+
+img {
+  width: 200px;
+}
+
+h1 {
+  text-align: center;
+}
+
+h2 {
+  color: brown;
+}
+
+.dark-green-text {
+  color: darkgreen;
+}
+
+.centered-text {
+  text-align: center;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td,
+th {
+  border: 1px solid black;
+  padding: 20px;
+}
+
+.colored-row {
+  background-color: lightsalmon;
+}
+
+/* 
+nth-child(n) - псевдокласс для выбора элемента по его порядковому номеру среди своих братьев. n - это число, формула или ключевое слово (odd, even)
+*/
+table.stripped-table tbody tr:nth-child(odd) {
+  background-color: rgb(12, 177, 233);
+}
+
+
+.stripped-table tbody tr:nth-child(odd) {
+  background-color: lightblue !important;
+}
+
+.stripped-table thead tr {
+  background-color: lightcoral;
+  font-weight: bold;
+  font-size: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.stripped-table thead th {
+  border: 2px solid darkred;
+  color: darkred;
+}
+
+.stripped-table tfoot tr {
+  background-color: lightgreen;
+  font-style: italic;
+  padding: 10px;
+  border: 2px dashed green;
+}
