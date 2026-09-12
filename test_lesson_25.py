@@ -61,3 +61,17 @@ def test_get_sum_number_and_string_raises():
 def test_get_sum_invalid_raises(a, b, exc):
     with pytest.raises(exc):
         get_sum(a, b)
+
+
+def fetch_users_from_db():
+    # имитация реального запроса к базе данных
+    return ["Никита", "Михаил", "Ирина", "Ирина", "Валентин"]
+
+
+@pytest.fixture
+def users():
+    return fetch_users_from_db()
+
+
+def test_len_users(users):
+    assert len(users) == 5, "Кажется пользователей не 5"
