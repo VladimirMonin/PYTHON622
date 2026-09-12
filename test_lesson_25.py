@@ -21,15 +21,31 @@ if name != "Михаил":
 def get_hello_msg(name: str)->str:
     return f"Привет {name}"
 
-name1 = "Валентин"
-name2 = "Алина"
-name3 = "Тагуи"
-
-def test_get_hello_msg_valentin():
-    assert get_hello_msg(name1) == "Привет Валентин", "Кажется функция get_hello_msg НЕ работает"
 
 
-def test_get_hello_msg_girls():
-    assert get_hello_msg(name2) == "Привет Алина!", "Кажется функция get_hello_msg НЕ работает"
-    # В каждой тестовой функции должен быть только один assert - при этом тут они могут оба работать, но если первый упадет, то второй НЕ БУДЕТ ПРОВЕРЯТСЯ!!!!!!!!!!!!!
-    assert get_hello_msg(name3) == "Привет Тагуи", "Кажется функция get_hello_msg НЕ работает"
+test_data_get_hello_names = [
+    ["Никита", "Привет Никита"],
+    ["Михаил", "Привет Михаил"],
+    ["Ирина", "Привет Ирина"]
+]
+
+import pytest
+
+@pytest.mark.parametrize("name, expected", test_data_get_hello_names)
+def test_get_hello_msg(name: str, expected: str):
+    assert get_hello_msg(name) == expected, f"Ожидалось {expected}"
+
+
+test_data_get_sum = [
+    [2, 2, 4],
+    [3, 4, 7],
+    [5, 6, 11],
+    [10, 10, 22]
+]
+
+def get_sum(a: int, b: int) -> int:
+    return a + b
+
+@pytest.mark.parametrize("a, b, expected", test_data_get_sum)
+def test_get_sum(a: int, b: int, expected: int):
+    assert get_sum(a, b) == expected, f"Ожидалось {expected}"
