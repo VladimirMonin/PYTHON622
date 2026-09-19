@@ -2,19 +2,29 @@
 Lesson 27 - Знакомство с ООП
 """
 
+
 class Fridge:
-    prdoducts = ["Колбаска", "Грушевая наливка"]
+    # Атрибуты класса
+    model = "Бирюса 26 Pro Max"
+    year = 2026
 
-my_fridge = Fridge()
+    def __init__(self, color: str, serial_number: int):
+        self.color = color
+        self.serial_number = serial_number
+        self.products: list = []
 
-print(my_fridge.prdoducts)
 
-my_mother_fridge = Fridge()
-my_mother_fridge.prdoducts.append("кабачок")
-my_mother_fridge.prdoducts.append("кабачок 2")
+my_fridge = Fridge("чёрный", 1)
+my_father_fridge = Fridge("белый", 2)
 
-print(id(my_fridge))
-print(id(my_mother_fridge))
+my_fridge.products.append("колбаска")
+my_father_fridge.products.append("коньяк")
 
-print("Мой холодильник", my_fridge.prdoducts)
-print(id(my_fridge.prdoducts), id(my_mother_fridge.prdoducts)) # 1581763181056 1581763181056
+print(my_fridge.products)
+print(my_fridge.color)
+print(my_fridge.model)
+
+print(my_father_fridge.products)
+print(my_father_fridge.color)
+print(my_father_fridge.model)
+
