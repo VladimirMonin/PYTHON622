@@ -3,10 +3,18 @@ Lesson 27 - Знакомство с ООП
 """
 
 class Fridge:
-    ...
+    prdoducts = ["Колбаска", "Грушевая наливка"]
 
 my_fridge = Fridge()
-print(type(my_fridge)) # <class '__main__.Fridge'>
-print(id(my_fridge)) # 1725917400432
-print(my_fridge) # <__main__.Fridge object at 0x00000191D8B18D70>
 
+print(my_fridge.prdoducts)
+
+my_mother_fridge = Fridge()
+my_mother_fridge.prdoducts.append("кабачок")
+my_mother_fridge.prdoducts.append("кабачок 2")
+
+print(id(my_fridge))
+print(id(my_mother_fridge))
+
+print("Мой холодильник", my_fridge.prdoducts)
+print(id(my_fridge.prdoducts), id(my_mother_fridge.prdoducts)) # 1581763181056 1581763181056
