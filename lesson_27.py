@@ -2,41 +2,42 @@
 Lesson 27 - Знакомство с ООП
 """
 
+class TxtDocument:
+    """
+    Класс для работы с текстовыми документами. Каждый экземпляр привязан к конкретному файлу.
+    """
+    def __init__(self, file_path: str):
+        self.file_path = file_path
 
-class Fridge:
-    # Атрибуты класса
-    model = "Бирюса 26 Pro Max"
-    year = 2026
+    def read(self) -> list[str]:
+        """
+        Метод читает документ и возвращает список строк. Если документа нет?? автоматически обрабатывает переносы строк
+        """
+        with open(self.file_path, mode="r", encoding="utf-8") as file:
+            list_strings = file.readlines()
+            return [string.strip() for string in list_strings]
 
-    def __init__(self, color: str, serial_number: str):
-        self.color = color
-        self.serial_number = serial_number
-        self.products: list = []
+    def write(self, data: list[str]) -> None:
+        """
+        Берет список строк и перезаписывает документ автоматически обрабатывает переносы строк
+        """
+        with open(self.file_path, mode="w", encoding="utf-8") as file:
+            prepeared_data = [string + "\n" for string in data]
+            file.writelines(prepeared_data)
 
-    def __str__(self):
-        result_str = f'Модель: "{self.model}\nГод выпуска:{self.year}\nСерийный номер: {self.serial_number}\nКол-во продуктов: {len(self.products)}"'
-        return result_str
-
-    def add_product(self, new_product: str) -> None:
-        if isinstance(new_product, str):
-            self.products.append(new_product)
-        else:
-            raise ValueError("В холодильник можно ложить только строки!")
-
-    def is_product(self,  check_product: str) -> bool:
-        return check_product.lower() in [product.lower() for product in self.products]
-
-
-
-my_fridge = Fridge("чёрный", "0001")
-my_father_fridge = Fridge("белый", "0002")
+    def append(self, data: list[str]) -> None:
+        """
+        Дозаписывает в документ список строк автоматически обрабатывает переносы строк
+        """
+        with open(self.file_path, mode="a", encoding="utf-8") as file:
+            prepeared_data = [string + "\n" for string in data]
+            file.writelines(prepeared_data)
 
 
-my_fridge.products.append("Молоко") # Так мы больше не делаем
-my_fridge.add_product("Айран")
+FILE_PATH = "lesson_27.txt"
+txt_file = TxtDocument(FILE_PATH)
 
-print(my_fridge.is_product("АЙРАН"))
-print(my_fridge.is_product("МоЛоКО"))
+txt_file.write(["Привет, это первая строка", "А это вторая строка и перенос добавит метод!"])
+txt_file.append(["Дозаписал третью строку. Метод тоже добавил пренос."])
 
-print(my_fridge)
-print(my_father_fridge)
+print(txt_file.read())
