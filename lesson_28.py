@@ -4,6 +4,15 @@ Lesson 28
 Итак, сегодня мы познакомимся с концепциями метода экземпляра, метода класса, static method и еще раз поговорим про атрибуты экземпляра и атрибуты класса.
 """
 
+class Product:
+    def __init__(self, name: str, description: str = ""):
+        self.name = name
+        self.description = description
+
+    def __str__(self):
+        return f'Продукт: {self.name}, Описание:{self.description if self.description else "Описание отсутствует"}'
+
+
 class Fridge:
     server_soft_version: str = "0.0.1"
     server_url: str = "www.birusa.ru/api/v1/"
@@ -13,10 +22,21 @@ class Fridge:
         self.owner = owner
         self. model = self.model_validator(model)
         self.current_soft_version = self.server_soft_version
+        self.products_list: None | list[Product] = None
 
 
     def __str__(self) -> str:
         return f"---\nВладелец: {self.owner}\nМодель:{self.model}\nТекущая прошивка: {self.current_soft_version}\n---"
+
+    def add_product(self, new_product: Product):
+        if not self.products_list:
+            self.products_list = []
+        if isinstance(new_product, Product):
+            self.products_list.append(new_product)
+
+        else:
+            raise ValueError(f"Нельзя помещать в холодильник {new_product}, только Product!")
+        
 
 
     def model_validator(self, model: str):
@@ -66,3 +86,11 @@ fridge_1.update_soft()
 print(fridge_1)
 
 print(Fridge.get_fridge_value(1.80, 0.60, 0.70))
+
+beer = Product("Пыво", "Чешский Гусь. Светлый и теплый")
+fridge_1.add_product(beer)
+# fridge_1.add_product("КОТ")
+
+if fridge_1.products_list:
+    for product in fridge_1.products_list:
+        print(product)
