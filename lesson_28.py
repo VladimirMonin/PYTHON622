@@ -39,6 +39,11 @@ class Fridge:
             print(f"Прошивка обновилась c {self.current_soft_version} на {self.server_soft_version}")
             self.current_soft_version = self.server_soft_version
 
+
+    @staticmethod
+    def get_fridge_value(length: int|float, width: int|float, height: int|float)-> int|float:
+        return length * width * height
+
 # fridge_1 = Fridge("Владимир", "Биюрса Про Макс Ультра Пультра Эдишн!") # ValueError: Недопустимое название модели! Допустимо: ['Бирюса', 'Бирюса Плюс', 'Бирюса Про', 'Бирюса Про Макс']
 fridge_1 = Fridge("Владимир", "Бирюса Плюс")
 fridge_2 = Fridge("Батя", "Бирюса Про Макс")
@@ -59,3 +64,5 @@ print(fridge_3)
 fridge_1.update_soft()
 
 print(fridge_1)
+
+print(Fridge.get_fridge_value(1.80, 0.60, 0.70))
