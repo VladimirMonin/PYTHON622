@@ -25,15 +25,17 @@ class Car:
     def get_max_speed(self) -> float:
         return self.__max_speed
 
-    def set_max_speed(self, new_max_speed: float) -> None:
+    def __validate_max_speed(self, new_max_speed: float):
         if not isinstance(new_max_speed, float):
             raise ValueError("Новая скорость должна быть float")
         if new_max_speed > self.__max_speed_threshold:
             raise ValueError(
                 f"Новая скорость должна быть ниже чем {self.__max_speed_threshold}"
             )
-        else:
-            self.__max_speed = new_max_speed
+
+    def set_max_speed(self, new_max_speed: float) -> None:
+        self.__validate_max_speed(new_max_speed)
+        self.__max_speed = new_max_speed
 
 
 car1 = Car("Деу Маркиз", "Красный")
