@@ -1,57 +1,66 @@
-"""
-Инкапсуляция в объектно-ориентированном программировании `Python` — это способ скрыть логику и информацию. Мы можем скрыть от внешнего мира — от других классов и от пользователей нашего класса — как атрибуты, так и методы собственного класса.
+import json
+CONFIG_FILE = r"C:\PY\ПРИМЕРЫ КОДА\PYTHON622\lesson_29_config.json"
 
-Делается это, как правило, для того, чтобы не сломать сложную внутреннюю логику. И здесь можно провести много параллелей: это как у пользователя автомобиля нет доступа к логике бортового компьютера напрямую, так и с биологией — было бы странно, если бы мы могли почесать свою печень или желудок или напрямую положить туда еду, сразу в желудок. Это было бы очень странно. Здесь и инженеры, и сама природа скрыли от нас реализацию внутренней логики и внутренней информации.
+class Config:
+    def __init__(self, config_file: str):
+        self.config_file = config_file
+        self.__polza_api_key = ""
+        self.__model = ""
+        self.__polza_base_url = ""
+        self.__system_prompt = ""
 
-В объектно-ориентированном программировании на Python методы `property` (getter и setter) используются для управления доступом к атрибутам класса. Они позволяют инкапсулировать данные, предоставляя интерфейс для чтения и записи значений, при этом выполняя дополнительную логику при обращении к ним.
 
-Getter (геттер) определяется декоратором `@property`. Он позволяет обращаться к методу как к обычному атрибуту, скрывая вызов функции. Это удобно для вычисляемых свойств или для обеспечения доступа к приватным полям только для чтения.
+    def __read_json_config(self):
+        try:
+            with open(self.config_file, encoding="utf-8") as file:
+                return json.load(file)
+        except FileNotFoundError:
+            raise FileNotFoundError("JSON файл конфига не обнаружен")
 
-Setter (сеттер) определяется декоратором `@имя_свойства.setter`. Он срабатывает при попытке присвоения значения атрибуту через оператор равенства. Использование сеттера позволяет добавить валидацию данных или автоматическое обновление зависимых состояний перед тем, как новое значение будет сохранено в объект.
-"""
+        except json.JSONDecodeError:
+            raise Exception("Файл конфига битый")
+
+    def __read_prompt_txt(self, system_prompt_file: str):
+        try:
+            with open(system_prompt_file, encoding="utf-8") as file:
+                return [line.strip() for line in file.readlines()]
+
+        except FileNotFoundError:
+            raise FileNotFoundError("Промпт файл не обнаружен")
 
 
-class Car:
-    def __init__(self, model: str, color: str):
-        self.model = model
-        self.color = color
-        self.__max_speed_threshold: float = 500.0
-        self.__max_speed: float = 250.0
-        self.__vin_number: str = "BIN007"
+    def load(self):
+        config_data = self.__read_json_config()
+        # ПО ХОРОШЕМУ ТУТ НАДО ПРОВЕРИТЬ ЧТО КОНФИГ ПРАВИЛЬНЫЙ, как минимум что данные есть внутри
+        system_prompt_file = config_data["system_prompt"]
+        self.__system_prompt = self.__read_prompt_txt(system_prompt_file)
 
-    def __str__(self):
-        return f"""
-Информация по автомобилю
-Модель: {self.model}
-Цвет: {self.color}
-Максимальная скорость: {self.__max_speed}
-Серийный номер кузова: {self.__vin_number}
-"""
+        # Если все файлы прочитаны мы можем продолжить определять другие части конфига
+        self.__polza_api_key = config_data["polza_api_key"]
+        self.__model = config_data["model"]
+        self.__polza_base_url = config_data["polza_base_url"]
+
 
     @property
-    def max_speed(self) -> float:
-        return self.__max_speed
+    def polza_api_key(self):
+        return self.__polza_api_key
 
-    @max_speed.setter
-    def max_speed(self, new_max_speed: float) -> None:
-        self.__validate_max_speed(new_max_speed)
-        self.__max_speed = new_max_speed
+    @property
+    def model(self):
+        return self.__model
 
-    def __validate_max_speed(self, new_max_speed: float):
-        if not isinstance(new_max_speed, float):
-            raise ValueError("Новая скорость должна быть float")
-        if new_max_speed > self.__max_speed_threshold:
-            raise ValueError(
-                f"Новая скорость должна быть ниже чем {self.__max_speed_threshold}"
-            )
+    @property
+    def polza_base_url(self):
+        return self.__polza_base_url
+
+    @property
+    def system_prompt(self):
+        return self.__system_prompt
 
 
-car1 = Car("Деу Маркиз", "Красный")
-print(car1.max_speed)
+config = Config(CONFIG_FILE)
+config.load()
 
-car1.max_speed = 400.0
-
-print(car1.max_speed)
-
-# car1.set_max_speed("Чебурек") # ValueError: Новая скорость должна быть float
-# car1.set_max_speed(800.0) # ValueError: Новая скорость должна быть ниже чем 500.0
+print(config.system_prompt)
+# config.system_prompt = "Чербурек"
+# AttributeError: property 'system_prompt' of 'Config' object has no setter

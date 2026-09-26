@@ -1,0 +1,6 @@
+{
+"polza_api_key": null,
+"model": "z-ai/glm-5.3-flashx",
+"polza_base_url": "https://polza.ai/api/v1",
+"system_prompt": "C:\\PY\\ПРИМЕРЫ КОДА\\PYTHON622\\lesson_29_prompt.txt"
+}
