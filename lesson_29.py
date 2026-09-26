@@ -6,10 +6,11 @@
 
 
 class Car:
-    def __init__(self, model, color):
+    def __init__(self, model: str, color: str):
         self.model = model
         self.color = color
-        self._max_speed: float = 250.0
+        self.__max_speed_threshold: float = 500.0
+        self.__max_speed: float = 250.0
         self.__vin_number: str = "BIN007"
 
     def __str__(self):
@@ -17,19 +18,31 @@ class Car:
 Информация по автомобилю
 Модель: {self.model}
 Цвет: {self.color}
-Максимальная скорость: {self._max_speed}
+Максимальная скорость: {self.__max_speed}
 Серийный номер кузова: {self.__vin_number}
 """
 
+    def get_max_speed(self) -> float:
+        return self.__max_speed
+
+    def set_max_speed(self, new_max_speed: float) -> None:
+        if not isinstance(new_max_speed, float):
+            raise ValueError("Новая скорость должна быть float")
+        if new_max_speed > self.__max_speed_threshold:
+            raise ValueError(
+                f"Новая скорость должна быть ниже чем {self.__max_speed_threshold}"
+            )
+        else:
+            self.__max_speed = new_max_speed
+
+
 car1 = Car("Деу Маркиз", "Красный")
-print(car1)
-car1._max_speed = 350
-print(car1)
-# print(car1.__vin_number) # AttributeError: 'Car' object has no attribute '__vin_number'. Did you mean: '_Car__vin_number'
-print(car1._Car__vin_number)
-car1.__vin_number = "BIN008"
-print(car1)
-print(car1.__vin_number)
-"""
-Если вы видите self, точка, одно нижнее подчеркивание, это означает, что это защищенный метод или защищенный атрибут класса.  Это означает, что вы говорите другим разработчикам, слушай, вот эту штуку менять лучше не надо, она является частью внутренней логики, и я как бы не хотел, чтобы ты туда лез своими ручонками.  Пожалуйста, не делай этого.  Это остается на уровне соглашения, и как вы видите сейчас на экране, замечательно может быть изменено.  Мы изменили максимальную скорость автомобиля.  В свою очередь, два нижних подчеркивания означает приватный метод или приватный атрибут.  Запомнить очень легко, в свою очередь, ну в свое время я не мог это запомнить, и я пришел к такой концепции, да,  что приватный это что-то прямо очень личное, очень-очень личное, а защищенный это, ну так, да, личное, но не очень.  То есть, если вы хотите хранить приватность, соответственно, это два нижних подчеркивания.  Эта штука прячется механизмами Python и фактически переименовывается.  Поэтому, когда мы говорим self 2.2 нижних подчеркивания winnumber и записываем туда новый кузовной номер,  фактически мы не переписываем приватный атрибут, потому что он был спрятан от нас.  Мы сейчас будем разбираться, как на самом деле он переименовывается, но до него можно дотянуться, если очень захочется.  В Python в целом действует общая концепция, все мы здесь взрослые люди, и не надо тянуть свои ручонки туда, куда не надо.
-"""
+print(car1.get_max_speed())
+
+car1.set_max_speed(450.0)
+
+print(car1.get_max_speed())
+
+# car1.set_max_speed("Чебурек") # ValueError: Новая скорость должна быть float
+# car1.set_max_speed(800.0) # ValueError: Новая скорость должна быть ниже чем 500.0
+
