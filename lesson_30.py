@@ -20,9 +20,19 @@ __isub__(self, other)` — вычитание с присваиванием (`-=
 __imul__(self, other)` — умножение с присваиванием (`*=`);
 __itruediv__(self, other)` — деление с присваиванием (`/=`).
 
+
+__lt__(self, other) — сравнение «меньше» (<).
+__le__(self, other) — сравнение «меньше или равно» (<=).
+__gt__(self, other) — сравнение «больше» (>).
+__ge__(self, other) — сравнение «больше или равно» (>=).
+__eq__(self, other) — сравнение «равно» (==).
+__ne__(self, other) — сравнение «не равно» (!=).
+
+Для работы всех этих методов достаточно реализовать __eq__ и один из методов сравнения (например, __lt__). Остальные методы Python может вычислить автоматически, если подключить декоратор @functools.total_ordering над классом.
 """
 
 import logging
+from functools import total_ordering
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -46,7 +56,10 @@ class Prompt:
         self.prompts_parts.append(other)
         return self
 
+    def __call__(self, arg_1: str):
+        print(f"Вызвали экземпляр с аргументом", arg_1)
 
+@total_ordering
 class PromptPart:
     def __init__(self, text_prompt: str):
         self.text_prompt = text_prompt
@@ -60,6 +73,12 @@ class PromptPart:
     def __add__(self, other: "PromptPart"):
         return 
 
+    def __eq__(self, other: "PromptPart"):
+        return self.__len__ == len(other)
+
+    def __lt__(self, other: "PromptPart"):
+        return self.__len__ < len(other)
+
 
 SYSTEM_PROMPT = "Ты репетитор по Python. Никогда не говоришь готовых решений, но всегда рад разобрать задачи и код на похожих примерах. Стараешься объяснять простым понятным языком, используя mermaid диаграммы, аналогии офисной жизни и популярные примеры из интернета"
 
@@ -72,6 +91,8 @@ main_prompt = (Prompt(system_prompt_part))
 style_prompt_part = PromptPart(STYLE_PROMPT)
 
 main_prompt += style_prompt_part
+
+main_prompt("Чебурек")
 
 print(main_prompt)
 print(len(main_prompt))
