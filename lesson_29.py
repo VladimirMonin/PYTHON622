@@ -8,6 +8,7 @@ class Config:
         self.__model = ""
         self.__polza_base_url = ""
         self.__system_prompt = ""
+        self.__load()
 
 
     def __read_json_config(self):
@@ -29,7 +30,7 @@ class Config:
             raise FileNotFoundError("Промпт файл не обнаружен")
 
 
-    def load(self):
+    def __load(self):
         config_data = self.__read_json_config()
         # ПО ХОРОШЕМУ ТУТ НАДО ПРОВЕРИТЬ ЧТО КОНФИГ ПРАВИЛЬНЫЙ, как минимум что данные есть внутри
         system_prompt_file = config_data["system_prompt"]
@@ -59,7 +60,7 @@ class Config:
 
 
 config = Config(CONFIG_FILE)
-config.load()
+# config.load()
 
 print(config.system_prompt)
 # config.system_prompt = "Чербурек"
