@@ -28,86 +28,50 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-class RobotToy:
-    MINIMAL_BATTERY_LEVEL = 20
+class Prompt:
+    def __init__(self, start_prompt: "PromptPart"):
+        self.start_prompt = start_prompt
+        self.prompts_parts = []
 
-    def __init__(self, name: str, size: int, battery_level: int):
-        # Запускается на создании экземпляра
-        self.name = name
-        self.size = size
-        self.battery_level = battery_level
-        logger.debug(self.__str__())
+    def __str__(self):
+        return f"Промпт состоящий из {len(self.prompts_parts)+1} частей. Общая длина в символах: {self.__len__()}"
 
-    def __str__(self) -> str:
-        logger.debug("Был приведен к строке")
-        return f"Экземпляр {self.__class__.__name__} создан\nИмя: {self.name}\nРазмер: {self.size}.\nУровень заряда: {self.battery_level}"
+    def __len__(self):
+        """
+        Возвращает длину в знаках всех промптов из списка + длину стартового промпта
+        """
+        return len(self.start_prompt) + sum([len(prompt) for prompt in self.prompts_parts])
 
-    def __len__(self) -> int:
-        logger.debug("Была получена длина")
-        return self.size
-
-    def __bool__(self) -> bool:
-        logger.debug("Был приведен к Bool")
-        return self.battery_level > self.MINIMAL_BATTERY_LEVEL
-
-    def __add__(self, other: RobotToy) -> RobotToy:
-        logger.debug("Была попытка объединить двух роботов")
-        if not isinstance(other, RobotToy):
-            logger.error(f"Была попытка скрестить робота с {type(other)}")
-            raise ValueError(f"Поддерживаются операции сложения только с {self.__class__.__name__}")
-        
-        new_name = f"{self.name}-{other.name}"
-        new_size = self.size + other.size
-        new_battary_level = max([self.battery_level, other.battery_level])
-        new_robot = RobotToy(new_name, new_size, new_battary_level)
-
-        return new_robot
+    def __add__(self, other: "PromptPart")-> Prompt:
+        self.prompts_parts.append(other)
+        return self
 
 
-robot_1 = RobotToy("ЖораТрон", 10, 80)
-robot_2 = RobotToy("Оптимус", 5, 15)
-robot_3 = RobotToy("Т1000", 15, 60)
+class PromptPart:
+    def __init__(self, text_prompt: str):
+        self.text_prompt = text_prompt
 
-robots = [robot_1, robot_2, robot_3]
+    def __str__(self):
+        return self.text_prompt
 
-print(robot_1)
-print(robot_2)
+    def __len__(self):
+        return len(self.text_prompt)
 
-print(len(robot_1))
-
-if robot_1:
-    print(f"{robot_1.name} заряжен")
-else:
-    print(f"{robot_1.name} разряжен")
+    def __add__(self, other: "PromptPart"):
+        return 
 
 
-if robot_2:
-    print(f"{robot_2.name} заряжен")
-else:
-    print(f"{robot_2.name} разряжен")
+SYSTEM_PROMPT = "Ты репетитор по Python. Никогда не говоришь готовых решений, но всегда рад разобрать задачи и код на похожих примерах. Стараешься объяснять простым понятным языком, используя mermaid диаграммы, аналогии офисной жизни и популярные примеры из интернета"
 
-robots.sort(key=len)
-print(robots)
-[print(robot) for robot in robots]
+STYLE_PROMPT = "Мне нравятся mermeid диаграммы, таблицы и нормальный текст. Ненавижу перечени нумерованные списки и ненумерованные списки. Использование эмодзи 5 из 10. Юмор 6 из 10 Простые и понятные объяснения 10 из 10"
 
-"""
-Чем отличаются операции `a + b` и `a += 2`? В случае обычного плюса у нас создается новый экземпляр числа.
+system_prompt_part = PromptPart(SYSTEM_PROMPT)
 
-В случае `a += 2` у нас видоизменяется число `a`. Такая операция называется in-place, то есть «на месте».
+main_prompt = (Prompt(system_prompt_part))
 
-Это означает, что происходит изменение текущего экземпляра класса, с которым мы работаем. В данном случае это экземпляр класса, на который ссылается переменная `a`.
+style_prompt_part = PromptPart(STYLE_PROMPT)
 
-А вот в случае `a + b` у нас рождается третий объект — экземпляр класса, и он будет являться новым объектом.
-"""
-a = 2
-b = 2
-c = a + b
-a += 2
+main_prompt += style_prompt_part
 
-robot_4 = robot_1 + robot_2 + robot_3
-print(robot_4)
-
-robot_1 += robot_2
-print(robot_1)
-
-# robot_1 + "Человек" # ValueError: Поддерживаются операции сложения только с RobotToy
+print(main_prompt)
+print(len(main_prompt))
