@@ -20,9 +20,19 @@ class Car:
     def stop_engine(self):
         print(f"Двигатель {self.brand} {self.model} {self.year} остановлен.")
 
+    def honk(self):
+        print(f"{self.brand} {self.model} сигналит: Бип-бип!")
+
 
 class LadaBlackBerry(Car):
-    ...
+    def fly(self):
+        print(f"{self.brand} {self.model} {self.year} полетела в Хогвартс! 🚀")
+
+    def honk(self):
+        # Переопределил! Метод родителя больше не работает
+        print(f"Пафосно сигналит {self.brand} {self.model}!")
 
 lada = LadaBlackBerry("Lada", "BlackBerry", 2023)
 lada.start_engine()
+lada.fly()
+lada.honk()
