@@ -1,54 +1,39 @@
 """
 Урок 32. Наследование
 """
-class Animal:
-    def __init__(self, name):
+ 
+
+class WoodenToyMixin:
+    material = "Дерево"
+
+    def get_info(self):
+        return f"Инфа из класса WoodenToy: {self.name}"
+
+class MetallToyMixin:
+    material = "Металл"
+
+    def get_info(self):
+        return f"Инфа из класса MetallToy: {self.name}"
+
+class PoliticalDesignMixin:
+    type_design = "Политический дизайн"
+
+    def __init__(self, political_name):
+        self.political_name = political_name
+
+class Toy:
+    def __init__(self, name, price):
         self.name = name
+        self.price = price
 
-    def eat(self):
-        return f"{self.name} ест пищу."
-
-    def sleep(self):
-        return f"{self.name} спит."
-
-    def move(self):
-        return f"{self.name} двигается."
+    def get_info(self):
+        return f"Игрушка: {self.name}, Цена: {self.price} руб."
 
 
+class BushMetalMattrToy(Toy, MetallToyMixin, PoliticalDesignMixin):
+    def __init__(self, name, price, political_name):
+        Toy.__init__(self, name, price)
+        PoliticalDesignMixin.__init__(self, political_name)
 
-class Bird(Animal):
-    def __init__(self, name):
-        super().__init__(name)
-        self.wings = 2
-
-    def fly(self):
-        return f"{self.name} летит в небе!"
-
-    def sing(self):
-        return f"{self.name} поет свою песню!"
-
-    def special_skill(self):
-        return f"{self.name} закладывает бочку в воздухе!"
-
-
-class Goose(Bird):
-    def __init__(self, name: str, owner: str):
-        super().__init__(name)
-        # self.name = name
-        self.owner = owner
-
-    def special_skill(self):
-        return f"{self.name} гоняет детей по ферме!"
-
-    def sing(self):
-        # Аналог super().sing()
-        # return self.__class__.__bases__[0].sing(self)
-        # return Bird.sing(self)
-
-        result = super().sing()  # Вызов метода родителя
-        return result + "га-га-га!"  # Добавляем свою логику
-
-
-goose = Goose("Пыжик", "Фёдор")
-print(goose.special_skill())
-print(goose.sing())
+    def get_info(self):
+        return f"Игрушка: {self.name}, Цена: {self.price} руб., Политический дизайн: {self.political_name}, Материал: {self.material}"
