@@ -1,11 +1,24 @@
 """
 Урок 32. Наследование
 """
-
-
-class Bird:
+class Animal:
     def __init__(self, name):
         self.name = name
+
+    def eat(self):
+        return f"{self.name} ест пищу."
+
+    def sleep(self):
+        return f"{self.name} спит."
+
+    def move(self):
+        return f"{self.name} двигается."
+
+
+
+class Bird(Animal):
+    def __init__(self, name):
+        super().__init__(name)
         self.wings = 2
 
     def fly(self):
