@@ -25,12 +25,18 @@ class Car:
 
 
 class LadaBlackBerry(Car):
+    def __init__(self, brand: str, model: str, year: int, lighting: str = "LED"):
+        super().__init__(brand, model, year)  # Вызов конструктора родителя
+        self.lighting = lighting  # Добавляем новое свойство для наследника
+
     def fly(self):
         print(f"{self.brand} {self.model} {self.year} полетела в Хогвартс! 🚀")
 
     def honk(self):
-        # Переопределил! Метод родителя больше не работает
+        # Расширяем! Сначала вызываем родительский метод, а потом добавляем свою логику
+        super().honk()  # Вызов метода родителя
         print(f"Пафосно сигналит {self.brand} {self.model}!")
+
 
 lada = LadaBlackBerry("Lada", "BlackBerry", 2023)
 lada.start_engine()
