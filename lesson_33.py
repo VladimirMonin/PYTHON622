@@ -1,49 +1,43 @@
-# Lesson 33 - Вспомить Миксины!
+"""
+# Lesson 33 - Вспомить Миксины и разобраться с AbstractClass
+"""
 
-class BaseBird:
-    def __init__(self, name:str):
-        self.name = name
+class JpegImage:
+    def __init__(self, file_name:str) -> None:
+        self.file_name = file_name
 
-    def voice(self)-> str:
-        return f"{self.name} говорит: "
-
-    def run(self):
-        print(f"{self.name} неизвестно, может ли бегать?!")
-
-    def fly(self):
-            print(f"{self.name} неизвестно, может ли летать?!")
-
-    def swim(self):
-            print(f"{self.name} неизвестно, может ли плавать?!")
+    def open(self):
+        print(f"{self.file_name} открыт!")
 
 
-class RunMixin:
-    def run(self):
-        print(f"{self.name} бежит!")
+class PngImage:
+    def __init__(self, file_name:str) -> None:
+        self.file_name = file_name
+
+    def open(self):
+        print(f"{self.file_name} открыт!")
 
 
-class FlyMixin:
-    def fly(self):
-        print(f"{self.name} летит!")
+class AvifImage:
+    def __init__(self, file_name:str) -> None:
+        self.file_name = file_name
 
+    def open_file(self):
+        print(f"{self.file_name} открыт!")
 
-class SwimMixin:
-    def swim(self):
-        print(f"{self.name} плывет!")
+jpeg_1 = JpegImage("Котик.jpg")
+jpeg_2 = JpegImage("Котик2.jpg")
+png_1 = PngImage("Котик.png")
+avif_1 = AvifImage("Котик.avif")
 
-class RoboDuckV1(BaseBird, SwimMixin, FlyMixin):
-     ...
+my_images_1 = [jpeg_1, jpeg_2, png_1]
+my_images_2 = [png_1, avif_1]
 
+for image in my_images_1:
+    image.open()
 
-class RoboDuckV2(SwimMixin, FlyMixin, BaseBird):
-     ...
+print("Пошел второй цикл")
 
-robo_duck_1 = RoboDuckV1("Скрудж")
-robo_duck_2 = RoboDuckV2("Дональд")
-
-robo_duck_1.fly()
-robo_duck_2.fly()
-
-# Сделаем MRO
-print(RoboDuckV1.mro())
-print(RoboDuckV2.mro())
+# Тут будет ошибка потому что у класса AvifImage НЕТ метода open
+for image in my_images_2:
+    image.open()
