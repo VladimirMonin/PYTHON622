@@ -11,18 +11,20 @@ class Employee:
     name: str
     last_name: str
     age: int
+    hobbies: list = []
 
     def __str__(self)->str:
         """
         Строковое представление объекта сделано для красивой печати экземпляров класса в вашем коде, чтобы это радовало ваш глаз. Когда НЕТ str - работает автоматичски repr
         """
-        return f"Сотрудник: {self.name} {self.last_name}. Возраст: {self.age}"
+        return f"Сотрудник: {self.name} {self.last_name}. Возраст: {self.age}\nХобби: {', '.join(self.hobbies)}"
 
     def __repr__(self)-> str:
         return f"Employee(name='{self.name}', last_name='{self.last_name}', age={self.age} )"
 
 
-emp_1 = Employee("Иван", "Сергеев", 22)
+emp_1 = Employee("Иван", "Сергеев", 22, ["Пиво", "Хоккей", "Девушки"])
+emp_2 = Employee("Мария", "Петрова", 24, ["Йога","Котики","Розовые свитера"])
 print(emp_1)
-# Сотрудник: Иван Сергеев. Возраст: 22 - Если str сделан
-# Employee(name='Иван', last_name='Сергеев', age='22' ) - Если репр описан или нет - я это получу, потому что @dataclass это за на
+print(emp_2)
+# ValueError: mutable default <class 'list'> for field hobbies is not allowed: use default_factory
