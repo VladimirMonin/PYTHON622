@@ -6,12 +6,12 @@
 
 from dataclasses import dataclass, field
 
-@dataclass
+@dataclass(order=True)
 class Employee:
-    name: str
-    last_name: str
-    age: int
-    hobbies: list = field(default_factory=list)
+    name: str = field(compare=False)
+    last_name: str = field(compare=False)
+    age: int 
+    hobbies: list = field(default_factory=list, compare=False)
 
     def __str__(self)->str:
         """
@@ -25,6 +25,21 @@ class Employee:
 
 emp_1 = Employee("Иван", "Сергеев", 22, ["Пиво", "Хоккей", "Девушки"])
 emp_2 = Employee("Мария", "Петрова", 24, ["Йога","Котики","Розовые свитера"])
+emp_3 = Employee("Глафира", "Беднякова", 35, ["Чтение литературы по саморазвитию","Богатый Папа Бедный папа","Квизы по Гарри Поттеру"])
+
+
+my_employees = [emp_2, emp_1, emp_3]
+
+my_employees.sort(reverse=True)
+print(my_employees)
+
 print(emp_1)
 print(emp_2)
 # ValueError: mutable default <class 'list'> for field hobbies is not allowed: use default_factory
+
+print(emp_1 == emp_2) # Эта проверка работает
+print(emp_1 != emp_2) # Эта проверка работает
+
+# ЭТО ЗАРАБОТАЕТ ТОЛЬКО при включении параметра декоратора @dataclass(order=True)
+print(emp_1 > emp_2)
+print(emp_1 <= emp_2)
