@@ -4,14 +4,14 @@
 Датаклассы в Python специальные классы которые являются своим своего рода синтаксическим сахаром Они упрощают создание обычных классов и избавляют нас от необходимости писать некоторые вещи Например они автоматически создают инициализатор а также автоматически описывают некоторые специальные методы
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 @dataclass
 class Employee:
     name: str
     last_name: str
     age: int
-    hobbies: list = []
+    hobbies: list = field(default_factory=list)
 
     def __str__(self)->str:
         """
