@@ -6,12 +6,18 @@
 
 from dataclasses import dataclass, field
 
+class AgeValueError(ValueError):
+    ...
+
 @dataclass(order=True)
 class Employee:
     name: str = field(compare=False)
     last_name: str = field(compare=False)
     age: int 
     hobbies: list = field(default_factory=list, compare=False)
+
+    def __post_init__(self):
+        self.__age_validator()
 
     def __str__(self)->str:
         """
@@ -22,7 +28,16 @@ class Employee:
     def __repr__(self)-> str:
         return f"Employee(name='{self.name}', last_name='{self.last_name}', age={self.age} )"
 
+    def __age_validator(self):
+        if not isinstance(self.age, int):
+            raise TypeError("Age должен быть числом")
+        if not 0 < self.age < 120:
+            raise AgeValueError("Возраст вне диапазона")
+            
+                
+        
 
+emp_0 = Employee("Дракула", "Граф", 666, ["Кровь", "Молодые девушки", "Пугать крестьян"])
 emp_1 = Employee("Иван", "Сергеев", 22, ["Пиво", "Хоккей", "Девушки"])
 emp_2 = Employee("Мария", "Петрова", 24, ["Йога","Котики","Розовые свитера"])
 emp_3 = Employee("Глафира", "Беднякова", 35, ["Чтение литературы по саморазвитию","Богатый Папа Бедный папа","Квизы по Гарри Поттеру"])
