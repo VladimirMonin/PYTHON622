@@ -1,8 +1,9 @@
-from typing import Literal
-from pydantic import BaseModel
+from typing import Literal, Annotated
+from pydantic import BaseModel, Field
 
 # Этот код не гарантирует никаких проверок. Он подсказывает, что в этой переменной категория может являться одной из этих двух строк — это подсказка типов. Однако когда она помещается в Pydantic, она становится частью проверок.
 Сategory = Literal["хот-дог", "не хот-дог"]
+Price = Annotated[float, "цена", (199.99, 299.89)]
 
 # Здесь мы создали переменную и сказали, что она имеет свой собственный тип данных, который мы только что придумали. Если попытаться поместить туда то, что противоречит этому типу данных, мы получаем подчёркивание в редакторе. Но это не будет означать, что код не будет работать: это просто редактор подсказывает, что что-то не так с этим значением. При этом код исполняться будет.
 category_1: Сategory = "чебурек"
@@ -23,16 +24,27 @@ category
 class Food(BaseModel):
     name: str
     category: Сategory
+    price: Price
 
-food_1 = Food(name="Хот-дог классический", category="хот-дог")
-food_2 = Food(name="Чебурек", category="не хот-дог")
-food_3 = Food(name=f"Хот-Дог с сыром", category="хот-дог")
 
-menu = [food_1, food_2, food_3]
-hots = [f.name for f in menu if f.category == "хот-дог"]
+Ingredients = Literal["грибы", "картошка", "халапенью", "морковка по-корейски", "дополнительный соус"]
 
-def only(items: list[Food], c: Сategory)-> list[Food]:
-    return [f for f in items if f.category == c]
+class Shaverma(BaseModel):
+    name: str
+    price: Price
+    ingredients: list[Ingredients] | None = Field(default=None, min_length=1, max_length=6)
 
-only(menu, "не хот-дог")
-only(menu, "хот-дог")
+
+
+print(Price.__origin__) # <class 'float'>
+print(Price.__metadata__) # ('цена', (199.99, 299.89))
+print(Price.__metadata__[0]) # цена
+
+food_1 = Food(name="Хот-дог классический", category="хот-дог", price=200)
+
+
+# shaverma_1 = Shaverma(name="Богатырь", price=500, ingredients=["котята"])
+shaverma_1 = Shaverma(name="Богатырь", price=500, ingredients=["грибы"])
+"""pydantic_core._pydantic_core.ValidationError: 1 validation error for Shaverma
+ingredients.0
+  Input should be 'грибы', 'картошка', 'халапенью', 'морковка по-корейски' or 'дополнительный соус' [type=literal_error, input_value='котята', input_type=str]"""
