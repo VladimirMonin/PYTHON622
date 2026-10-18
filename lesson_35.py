@@ -1,27 +1,27 @@
 #Lesson 35 — Pydantic: зачем сделали эту библиотеку, какие альтернативы есть, в чём проблема проверять данные руками.
 
 from pydantic import BaseModel, ValidationError, Field
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import ValidationError
 
-ERROR_MESSAGES = {
-    "string_too_short": "Минимум {min_length} символа",
-    "string_too_long": "Максимум {max_length} символов",
-    "string_pattern_mismatch": "Только русские буквы и дефис",
-    "greater_than": "Значение должно быть больше {gt}",
-    "less_than": "Значение должно быть меньше {lt}",
-    "literal_error": "Недопустимое значение из списка",
-    "missing": "Обязательное поле",
-    "int_parsing": "Введите целое число",
-}
+# ERROR_MESSAGES = {
+#     "string_too_short": "Минимум {min_length} символа",
+#     "string_too_long": "Максимум {max_length} символов",
+#     "string_pattern_mismatch": "Только русские буквы и дефис",
+#     "greater_than": "Значение должно быть больше {gt}",
+#     "less_than": "Значение должно быть меньше {lt}",
+#     "literal_error": "Недопустимое значение из списка",
+#     "missing": "Обязательное поле",
+#     "int_parsing": "Введите целое число",
+# }
 
-FIELD_NAMES = {
-    "first_name": "Имя",
-    "last_name": "Фамилия",
-    "age": "Возраст",
-    "status": "Статус",
-}
+# FIELD_NAMES = {
+#     "first_name": "Имя",
+#     "last_name": "Фамилия",
+#     "age": "Возраст",
+#     "status": "Статус",
+# }
 
 class Employee(BaseModel):
     first_name: str = Field(
@@ -45,22 +45,33 @@ class Employee(BaseModel):
         "кандидат"
     ] = "работает"
 
+    is_married: bool
 
-try:
-    employee = Employee(
-        first_name="Г",
-        last_name="Дракула66",
-        age=665,
-        status="вампир"
-    )
+    hobbies: list[Annotated[str, Field(min_length=3, max_length=40)]] | None = Field(
+    default=None,
+    min_length=1,
+    max_length=5
+)
 
-except ValidationError as e:
-    for error in e.errors():
-        # Захожу в loc конкретной ошибки, беру его и по этому названию из своего словаря беру человекочитаемое название поля
-        field = FIELD_NAMES[error["loc"][0]]
 
-        # Делаю это же с ошибкой (тип и сообщение)
-        message = ERROR_MESSAGES.get(error["type"], error["msg"])
+employee = Employee(
+    first_name="Граф",
+    last_name="Дракула",
+    age="22",
+    status="кандидат",
+    is_married="No",
+    hobbies=["Детишки", "Томатный сок, кхе, кхе!"]
+)
 
-        message = message.format(**error.get("ctx", {}))
-        print(f"{field} : {message}")
+
+# Преобразование в словарь
+employee_dict = employee.model_dump()
+print(employee_dict)
+
+# Преобразование в JSON
+employee_json = employee.model_dump_json(ensure_ascii=False, indent=2)
+print(employee_json)
+
+# Обратный перегон через методы model_vaidate и model_validate_json
+employee_from_dict = Employee.model_validate(employee_dict)
+employee_from_json = Employee.model_validate_json(employee_json)
