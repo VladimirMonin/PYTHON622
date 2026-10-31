@@ -1,0 +1,145 @@
+-- database: ./marvel_not_normal.db
+
+SELECT * FROM MarvelCharacters;
+
+-- Функции в SQLITE 
+-- count() - подсчет количества строк в таблице
+-- sum() - суммирование значений в столбце
+-- avg() - вычисление среднего значения в столбце
+-- min() - нахождение минимального значения в столбце
+-- max() - нахождение максимального значения в столбце
+-- group_concat() - объединение значений в столбце в одну строку
+-- DISTINCT - выбор уникальных значений в столбце
+-- Функции НЕ ОБЯЗАТЕЛЬНО использовать вместе с GROUP BY, но часто они применяются вместе для агрегирования данных по определенным категориям.
+
+-- 1. Уникальные цвета глаз персонажей
+SELECT DISTINCT eye FROM MarvelCharacters;
+
+-- 1.1 Подсчет count * - посчитает ВСЕ! Но название конкретного столбца... вы посчитаете NOT NULL записи для него
+SELECT COUNT(*) AS unique_eye_count
+FROM MarvelCharacters;
+
+-- 1.2 Подсчет count DISTINCT - посчитает уникальные значения в столбце
+SELECT COUNT(DISTINCT eye) AS unique_eye_count
+FROM MarvelCharacters;
+
+
+-- 2. Группировка - вроде бы тоже самое, что и DISTINCT, но с возможностью использовать агрегатные функции
+SELECT eye
+FROM MarvelCharacters
+GROUP BY eye;
+
+-----------------------
+
+-- 2.1 Группировка по цвету глаз и подсчет количества персонажей с этим цветом глаз
+SELECT eye, COUNT(*) AS character_count
+FROM MarvelCharacters
+GROUP BY eye
+ORDER BY character_count DESC;
+
+
+-- 2.2 Группировка по цвету глаз. Убираем NULL и делаем суммарный APPEARNCES для каждого цвета глаз и подсчет персонажей с этим цветом глаз
+SELECT eye, COUNT(*) AS character_count, SUM(APPEARANCES) AS total_appearances
+FROM MarvelCharacters
+WHERE eye IS NOT NULL
+GROUP BY eye
+ORDER BY total_appearances DESC;
+
+
+-- 2.3 Как 2.2 но еще AVG добавим
+SELECT eye, COUNT(*) AS character_count, SUM(APPEARANCES) AS total_appearances, ROUND(AVG(APPEARANCES), 2) AS average_appearances
+FROM MarvelCharacters
+WHERE eye IS NOT NULL
+GROUP BY eye
+ORDER BY total_appearances DESC;
+
+-- 2.4 Как 2.3 но еще добавим группировку по цвету волос
+SELECT eye, hair, COUNT(*) AS character_count, SUM(APPEARANCES) AS total_appearances, ROUND(AVG(APPEARANCES), 2) AS average_appearances
+FROM MarvelCharacters
+WHERE eye IS NOT NULL
+GROUP BY eye, hair
+ORDER BY total_appearances DESC;
+
+----------------------------------------------
+----------------------------------------------
+
+-- 3.0 Группировка по Align, а так же по identity - поможет понять сколько персонажей с разными идентичностями и характеристиками Align
+SELECT ALIGN, identify, COUNT(*) AS character_count
+FROM MarvelCharacters
+WHERE ALIGN IS NOT NULL AND identify IS NOT NULL
+GROUP BY ALIGN, identify
+HAVING character_count > 9
+ORDER BY ALIGN, character_count DESC;
+
+
+-- 3.1 sex и identify - увидим сколько персонажей с разными идентичностями и характеристиками по полу
+SELECT SEX, COUNT(*) as character_count
+FROM MarvelCharacters
+WHERE SEX IS NOT NULL
+GROUP BY SEX
+ORDER BY character_count DESC;
+
+
+SELECT SEX, identify, COUNT(*) AS character_count
+FROM MarvelCharacters
+WHERE SEX IS NOT NULL AND identify IS NOT NULL
+GROUP BY SEX, identify
+-- HAVING character_count > 9
+ORDER BY SEX, character_count DESC;
+
+
+
+SELECT SEX, identify, COUNT(*) AS character_count, ROUND(AVG(APPEARANCES), 2) AS average_appearances, SUM(APPEARANCES) AS total_appearances
+FROM MarvelCharacters
+WHERE SEX IS NOT NULL AND identify IS NOT NULL
+GROUP BY SEX, identify
+-- HAVING character_count > 9
+ORDER BY SEX, character_count DESC;
+
+
+SELECT SEX, identify, COUNT(*) AS character_count, ROUND(AVG(APPEARANCES), 2) AS average_appearances, SUM(APPEARANCES) AS total_appearances
+FROM MarvelCharacters
+WHERE SEX IS NOT NULL 
+AND identify IS NOT NULL
+AND APPEARANCES > 9
+GROUP BY SEX, identify
+-- HAVING character_count > 9
+ORDER BY SEX, character_count DESC;
+
+
+----------------
+SELECT year, COUNT(*) AS charecters_count
+FROM MarvelCharacters
+WHERE year IS NOT NULL
+GROUP BY year
+ORDER BY year;
+
+SELECT year, COUNT(*) AS charecters_count
+FROM MarvelCharacters
+WHERE year IS NOT NULL
+GROUP BY year
+ORDER BY charecters_count DESC
+LIMIT 10;
+
+-- Группировка по декадам (по десятилетиям)
+
+-- 1946 / 10 = 194.6 => 194 * 10 = 1940
+-- 1982 / 10 = 198.2 => 198 * 10 = 1980
+SELECT (year / 10) * 10 AS decade, COUNT(*) AS characters_count
+FROM MarvelCharacters
+WHERE year IS NOT NULL
+GROUP BY decade
+ORDER BY decade;
+
+
+-- Один: сделать группировку по ALIVE, чтобы собрать группы живых и неживых персонажей, посчитать их количество.
+SELECT ALIVE, COUNT(*) AS character_count
+FROM MarvelCharacters
+WHERE ALIVE IS NOT NULL
+GROUP BY ALIVE;
+ 
+-- Два: в предыдущий запрос добавить среднее количество появлений, округлённое до двух.
+SELECT ALIVE, COUNT(*) AS character_count, ROUND(AVG(APPEARANCES), 2) AS average_appearances
+FROM MarvelCharacters
+WHERE ALIVE IS NOT NULL
+GROUP BY ALIVE;
