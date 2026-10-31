@@ -1,0 +1,51 @@
+-- database: ./marvel_not_normal.db
+
+SELECT *
+FROM MarvelCharacters;
+
+-- SELECT - выбирает определенные столбцы из указанной таблицы
+
+-- FROM - из какой таблицы мы делаем запрос
+
+-- WHERE - Где??? ЧТО?
+-- WHERE year = 1938
+-- WHERE year < 1940
+
+-- 3. Выборка год = 1938
+SELECT name, year, FIRST_APPEARANCE
+FROM MarvelCharacters
+WHERE year = 1939;
+
+-- 4. Где ГОД выхода ранее 1940
+SELECT name, year
+FROM MarvelCharacters
+WHERE year <= 1940;
+
+-- 5. Год выхода в диапазоне между 1939 и 1950 включительно
+SELECT name, year
+FROM MarvelCharacters
+WHERE year >= 1939 AND year <= 1945;
+
+-- < > <= >= != = 
+-- AND OR NOT IN BETWEEN
+
+-- 6. Это же но с BETWEEN
+SELECT name, year
+FROM MarvelCharacters
+WHERE year BETWEEN 1939 AND 1945;
+
+-- ORDER BY - сортировка
+-- ASC - от начала к концу (на увеличение) - ПО УМОЛЧАНИЮ
+-- DESC - от конца к началу - НАДО задать явно
+
+-- 7. Персонажи Марвел с 1939 по 1945 сортировка по частоте появления (популярные сверху!)
+SELECT name, year, appearances
+FROM MarvelCharacters
+WHERE year BETWEEN 1939 AND 1945
+ORDER BY appearances DESC;
+
+-- 8. Персонажи Марвел с 1939 по 1945 сортировка по ГОДУ и в рамках каждого ГОДА по  частоте появления (популярные сверху!)
+SELECT name, year, appearances
+FROM MarvelCharacters
+WHERE year BETWEEN 1939 AND 1945 AND appearances > 5
+ORDER BY year, appearances DESC;
