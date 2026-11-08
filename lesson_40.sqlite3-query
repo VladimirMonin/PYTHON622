@@ -1,0 +1,84 @@
+-- database: ./marvel_normal.db
+
+SELECT * FROM MarvelCharacters;
+
+-- 1. Простой запрос без JOIN не даст цвета волос 
+SELECT name, hair_id
+FROM MarvelCharacters;
+
+-- 2. Первый простой JOIN - получаем цвета волос
+SELECT MarvelCharacters.name, MarvelCharacters.hair_id, HairColor.hair_id,HairColor.color
+FROM MarvelCharacters
+JOIN HairColor ON MarvelCharacters.hair_id = HairColor.hair_id;
+
+-- 3. Этот же запрос но с псевдонимами таблиц
+SELECT mc.name, mc.hair_id, hc.hair_id, hc.color
+FROM MarvelCharacters AS mc
+JOIN HairColor AS hc ON mc.hair_id = hc.hair_id;
+
+-- 3.1 Этот же запрос но с псевдонимами таблиц и без лишнего столбца hair_id"
+SELECT mc.name, hc.color
+FROM MarvelCharacters AS mc
+JOIN HairColor AS hc ON mc.hair_id = hc.hair_id;
+
+-- 4. Добавим цвет глаз
+SELECT mc.name, hc.color AS hair_color, ec.color AS eye_color
+FROM MarvelCharacters AS mc
+JOIN HairColor AS hc ON mc.hair_id = hc.hair_id
+JOIN EyeColor AS ec ON mc.eye_id = ec.eye_id;
+
+-- 4.1 В прошлом запросе было 6298 позиций (а персонажей больше 16 тыс. Это связано с тем что у некоторых нет цвета волос или глаз. Поэтому добавим LEFT JOIN, чтобы получить всех персонажей, даже если у них нет цвета волос или глаз)
+SELECT mc.name, hc.color AS hair_color, ec.color AS eye_color
+FROM MarvelCharacters AS mc
+LEFT JOIN HairColor AS hc ON mc.hair_id = hc.hair_id
+LEFT JOIN EyeColor AS ec ON mc.eye_id = ec.eye_id;
+
+-- 5. Получим ПОЛНЫЕ данные из всех сводных таблиц
+-- Псевдонимы
+-- mc - MarvelCharacters
+-- hc - HairColor
+-- ec - EyeColor
+-- ide - Identity
+-- ls - LivingStatus
+-- al - Alignment
+-- sx - Sex
+SELECT mc.name, mc.APPEARANCES, mc.year, hc.color AS hair_color, ec.color AS eye_color, ide.identity, ls.status AS living_status, al.name AS alignment, sx.name AS sex
+FROM MarvelCharacters AS mc
+LEFT JOIN HairColor AS hc ON mc.hair_id = hc.hair_id
+LEFT JOIN EyeColor AS ec ON mc.eye_id = ec.eye_id
+LEFT JOIN Identity AS ide ON mc.identity_id = ide.identity_id
+LEFT JOIN LivingStatus AS ls ON mc.status_id = ls.status_id
+LEFT JOIN Alignment AS al ON mc.align_id = al.align_id
+LEFT JOIN Sex AS sx ON mc.sex_id = sx.sex_id
+ORDER BY mc.name;
+
+-- CTE - Common Table Expressions (CTE) - это временные результирующие наборы, которые можно использовать в последующих запросах. Они определяются с помощью ключевого слова WITH и могут быть полезны для упрощения сложных запросов.
+
+-- Создадим CTE с полной выборкой с LEFT JOIN и назовем его FullMarvelCharacters. В последующем запросе мы сможем использовать этот CTE как обычную таблицу.
+WITH FullMarvelCharacters AS (
+    SELECT mc.name, mc.APPEARANCES, mc.year, hc.color AS hair_color, ec.color AS eye_color, ide.identity, ls.status AS living_status, al.name AS alignment, sx.name AS sex
+    FROM MarvelCharacters AS mc
+    LEFT JOIN HairColor AS hc ON mc.hair_id = hc.hair_id
+    LEFT JOIN EyeColor AS ec ON mc.eye_id = ec.eye_id
+    LEFT JOIN Identity AS ide ON mc.identity_id = ide.identity_id
+    LEFT JOIN LivingStatus AS ls ON mc.status_id = ls.status_id
+    LEFT JOIN Alignment AS al ON mc.align_id = al.align_id
+    LEFT JOIN Sex AS sx ON mc.sex_id = sx.sex_id
+)
+SELECT *
+FROM FullMarvelCharacters;
+
+
+WITH FullMarvelCharacters AS (
+    SELECT mc.name, mc.APPEARANCES, mc.year, hc.color AS hair_color, ec.color AS eye_color, ide.identity, ls.status AS living_status, al.name AS alignment, sx.name AS sex
+    FROM MarvelCharacters AS mc
+    LEFT JOIN HairColor AS hc ON mc.hair_id = hc.hair_id
+    LEFT JOIN EyeColor AS ec ON mc.eye_id = ec.eye_id
+    LEFT JOIN Identity AS ide ON mc.identity_id = ide.identity_id
+    LEFT JOIN LivingStatus AS ls ON mc.status_id = ls.status_id
+    LEFT JOIN Alignment AS al ON mc.align_id = al.align_id
+    LEFT JOIN Sex AS sx ON mc.sex_id = sx.sex_id
+)
+SELECT *
+FROM FullMarvelCharacters
+WHERE name LIKE '%man%';
