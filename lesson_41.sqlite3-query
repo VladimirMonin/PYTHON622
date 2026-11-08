@@ -1,0 +1,147 @@
+-- database: ./marvel_normal.db
+
+SELECT * FROM MarvelCharacters;
+
+-- JOINS в SQLite 
+-- JOIN он же INNER JOIN - объединяет строки из двух таблиц, когда выполняется условие соединения. (внешний ключ не NULL!)
+
+SELECT mc.name, mc.APPEARANCES, ec.color
+FROM MarvelCharacters AS mc
+JOIN EyeColor AS ec ON mc.eye_id = ec.eye_id;
+
+-- 6609 позиций (потеряли 10000 примерно из за того что в MarvelCharacters есть NULL в eye_id)
+
+-- А что если мы добавим цвет волос сюда еще?)
+-- 6298
+SELECT mc.name, mc.APPEARANCES, ec.color, hc.color
+FROM MarvelCharacters AS mc
+JOIN EyeColor AS ec ON mc.eye_id = ec.eye_id
+JOIN HairColor AS hc ON mc.hair_id = hc.hair_id;
+
+
+-- LEFT JOIN - объединяет все строки из левой таблицы и соответствующие строки из правой таблицы. Если нет соответствующих строк в правой таблице, результат будет содержать NULL для правой таблицы.
+SELECT mc.name, mc.APPEARANCES, ec.color, hc.color
+FROM MarvelCharacters AS mc
+LEFT JOIN EyeColor AS ec ON mc.eye_id = ec.eye_id
+LEFT JOIN HairColor AS hc ON mc.hair_id = hc.hair_id;
+
+-- все 16376 позиций на месте! Правда не у всех есть указанный цвет глаз и волос, поэтому там NULL
+
+-- Создадим цвет волос которого нет
+INSERT INTO HairColor (color) VALUES ('Бутерброд-с-маслом');
+
+-- id выдался автоматом (у меня это 26)
+SELECT *
+FROM HairColor;
+
+SELECT mc.name, mc.APPEARANCES, hc.color
+FROM MarvelCharacters AS mc
+FULL JOIN HairColor AS hc ON mc.hair_id = hc.hair_id;
+
+
+SELECT mc.name, mc.APPEARANCES, hc.color, ec.color
+FROM MarvelCharacters AS mc
+CROSS JOIN HairColor AS hc
+CROSS JOIN EyeColor AS ec
+WHERE mc.APPEARANCES > 100 AND mc.name LIKE "Spider-Man (Peter Parker)"
+ORDER BY mc.APPEARANCES DESC;
+    
+SELECT count(*)
+FROM MarvelCharacters AS mc
+CROSS JOIN HairColor AS hc
+CROSS JOIN EyeColor AS ec
+ORDER BY mc.APPEARANCES DESC;
+
+
+
+--=======================-----------
+
+-- Подзапросы
+-- Подзапросы (Subqueries) - это запросы, вложенные в другие запросы. Они могут использоваться для фильтрации данных, вычисления агрегатов и других целей.
+-- Подзапросы могут быть использованы в SELECT, FROM, WHERE и других частях SQL-запроса.
+
+
+-- Посчитаем средний APPEARANCES по всем персонажам
+SELECT ROUND(AVG(APPEARANCES), 2) AS avg_appearances
+FROM MarvelCharacters;
+
+
+SELECT name, APPEARANCES
+FROM MarvelCharacters
+WHERE APPEARANCES > 17;
+
+-- или встроить запрос в запрос
+SELECT name, APPEARANCES
+FROM MarvelCharacters
+WHERE APPEARANCES > (SELECT ROUND(AVG(APPEARANCES), 2)
+FROM MarvelCharacters);
+
+
+SELECT MAX(APPEARANCES) - (MAX(APPEARANCES) * 0.40) AS lead_appearances
+FROM MarvelCharacters;
+
+-- Полный запрос с подзапросом
+SELECT name, APPEARANCES
+FROM MarvelCharacters
+WHERE APPEARANCES > (SELECT MAX(APPEARANCES) - (MAX(APPEARANCES) * 0.40) AS lead_appearances
+FROM MarvelCharacters);
+
+-- Персонажи с минимальным годом появления (Year) в таблице MarvelCharacters
+SELECT name, Year
+FROM MarvelCharacters
+WHERE Year = (SELECT MIN(Year) FROM MarvelCharacters)
+ORDER BY APPEARANCES DESC;
+
+-- Использование подзапросов и JOIN
+-- Смотрим ID цвета волос у лысых персонажей (HairColor = 'Bald') и выводим их имена и количество появлений
+SELECT hair_id
+FROM HairColor
+WHERE color = 'Bald';
+
+-- Получил ID 2
+SELECT name, APPEARANCES, hair_id
+FROM MarvelCharacters
+WHERE hair_id = 2
+ORDER BY APPEARANCES DESC;
+
+-- Запрос к одной таблице - подзапрос к другой таблице
+    SELECT name, APPEARANCES
+    FROM MarvelCharacters
+    WHERE hair_id = (SELECT hair_id FROM HairColor WHERE color = 'Bald')
+    ORDER BY APPEARANCES DESC;
+
+
+SELECT hair_id
+FROM HairColor
+WHERE color IN ('Bald', 'No Hair');
+
+-- Допустим нам нужны лысые и безволосые
+SELECT name, APPEARANCES, hair_id
+FROM MarvelCharacters
+WHERE hair_id IN (
+    SELECT hair_id 
+    FROM HairColor 
+    WHERE color IN ('Bald', 'No Hair'))
+ORDER BY APPEARANCES DESC;
+
+
+SELECT mc.name, mc.APPEARANCES, hc.color
+FROM MarvelCharacters AS mc
+JOIN HairColor AS hc ON mc.hair_id = hc.hair_id
+WHERE hc.color = 'Bald'
+ORDER BY mc.APPEARANCES DESC;
+
+-- CTE (Common Table Expressions) - это временные результаты, которые можно использовать в последующих запросах. Они определяются с помощью ключевого слова WITH и могут быть полезны для улучшения читаемости и организации сложных запросов.
+
+-- Подготовку Red Hair найдем его ID
+
+WITH FullMarverlCharacters AS (
+    SELECT mc.name, mc.appearances, mc.year, al.name AS alignment, hc.color AS hair_color, ec.color AS eye_color
+    FROM MarvelCharacters AS mc
+    LEFT JOIN HairColor AS hc ON mc.hair_id = hc.hair_id
+    LEFT JOIN EyeColor AS ec ON mc.eye_id = ec.eye_id
+    LEFT JOIN Alignment AS al ON mc.align_id = al.align_id
+)
+SELECT *
+FROM FullMarverlCharacters;
+-- ТУТ МОЖЕТ БЫТЬ ПОЛНОЦЕННЫЙ ЗАПРОС
