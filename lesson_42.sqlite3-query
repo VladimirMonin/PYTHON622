@@ -1,0 +1,145 @@
+-- database: ./marvel_not_normal.db
+
+SELECT * FROM MarvelCharacters;
+
+-- «Выведите имя персонажа (name), количество его появлений (APPEARANCES) и рядом — среднее число появлений персонажей его лагеря (ALIGN: добрый, злой или нейтральный)».
+
+SELECT name, align, AVG(appearances) AS avg_appearances
+FROM MarvelCharacters
+GROUP BY align;
+
+-- Запрос с PARTITION BY и OVER
+-- OVER - позволяет выполнять агрегатные функции в пределах определенного окна (набора строк), определяемого PARTITION BY и ORDER BY.
+-- PARTITION BY - позволяет разделить данные на группы (разделы) и выполнять агрегатные функции в пределах каждой группы.
+
+SELECT name, align, appearances, 
+AVG(appearances) OVER (PARTITION BY align) AS avg_appearances
+FROM MarvelCharacters;
+
+-- Показываем имена, цвет глаз, а так же сколько всего персонажей с таким цветом глаз
+SELECT name, eye, appearances, COUNT(*) OVER (PARTITION BY eye) AS total_characters_with_eye_color
+FROM MarvelCharacters
+WHERE eye IS NOT NULL
+ORDER BY appearances DESC;
+
+-- Персонажи с отображением имени, количества появлений и разницы между количеством появлений персонажа и средним количеством появлений (ВСЕГО)
+SELECT name, appearances,
+ROUND(appearances - AVG(appearances) OVER (), 2) AS difference_from_avg
+FROM MarvelCharacters
+ORDER BY difference_from_avg DESC;
+
+-- Такой же запрос но с фильтром по лагерю (ALIGN)
+SELECT name, appearances, align,
+ROUND(appearances - AVG(appearances) OVER (), 2) AS difference_from_avg,
+ROUND(appearances - AVG(appearances) OVER (PARTITION BY align), 2) AS difference_from_avg_by_align
+FROM MarvelCharacters
+ORDER BY appearances DESC;
+
+
+-- ЕСЛИ вы используете ORDER BY внутри OVER, то агрегатные функции будут выполняться в пределах каждой группы (PARTITION) в порядке, определенном ORDER BY. Это позволяет создавать нарастающие суммы, средние значения и другие агрегаты, которые учитывают порядок строк.
+-- Это действует для всех классических агрегатных функций, когда они используются в качестве оконных:
+
+-- SUM() — нарастающая сумма (классический running total: прибавляет значение текущей строки ко всем предыдущим).
+
+-- COUNT() — нарастающий счетчик (показывает, сколько строк/героев было обработано от начала шеренги до текущего момента).
+
+-- AVG() — нарастающее среднее (среднее значение среди всех строк от первой до текущей).
+
+-- MIN() / MAX() — текущий рекорд (наименьшее или наибольшее значение, зафиксированное на промежутке от начала шеренги до текущей строки).
+
+-- Простой пример нарастающей суммы когда появляется ORDER BY внутри OVER:
+
+SELECT name, year, appearances, 
+-- Общая сумма появлений всех персонажей (без фильтрации по годам)
+SUM(appearances) OVER () AS total_sum,
+-- Сумма по текущему году (PARTITION BY year)
+SUM(appearances) OVER (PARTITION BY year) AS total_sum_by_year,
+-- А тут будет нарастающий итог по годам
+SUM(appearances) OVER (ORDER BY year) AS running_total_by_year
+FROM MarvelCharacters
+WHERE appearances > 10 AND year IS NOT NULL
+ORDER BY year;
+
+-- По факту под капотом вызывался RANK() и ROW_NUMBER() для каждой строки, чтобы определить ее позицию в пределах окна (PARTITION) и порядка (ORDER BY). Эти функции помогают понять, какая строка идет первой, второй и так далее в пределах определенного набора данных.
+
+-- Виды рангов и их использование:
+-- ROW_NUMBER() — присваивает уникальный номер каждой строке в пределах окна, начиная с 1. Если строки имеют одинаковые значения, они все получат разные номера.
+-- RANK() — присваивает одинаковый ранг строкам с одинаковыми значениями, но пропускает следующие ранги. Например, если две строки делят 1-й ранг, следующая строка получит 3-й ранг.
+-- DENSE_RANK() — присваивает одинаковый ранг строкам с одинаковыми значениями, но не пропускает ранги. Например, если две строки делят 1-й ранг, следующая строка получит 2-й ранг.
+
+SELECT name, appearances,
+ROW_NUMBER() OVER (ORDER BY appearances DESC) AS row_num,
+RANK() OVER (ORDER BY appearances DESC) AS rank_num,
+DENSE_RANK() OVER (ORDER BY appearances DESC) AS dense_rank_num
+FROM MarvelCharacters
+WHERE appearances > 1000
+ORDER BY appearances DESC;
+
+-- Цифры одинаковы - потому что НЕТ в выдаче персонажей с одинаковым количеством появлений. Но если бы были, то вы бы увидели разницу между RANK() и DENSE_RANK().
+
+-- Похожий запрос по годам
+SELECT name, year,
+ROW_NUMBER() OVER (ORDER BY year) AS row_num,
+RANK() OVER (ORDER BY year) AS rank_num,
+DENSE_RANK() OVER (ORDER BY year) AS dense_rank_num
+FROM MarvelCharacters
+WHERE year IS NOT NULL AND YEAR BETWEEN 1939 AND 1945
+ORDER BY year;
+
+-- Топ дебютантов внутри каждого года (PARTITION BY year) 
+SELECT name, year, appearances, 
+ROW_NUMBER() OVER (
+    PARTITION BY year
+    ORDER BY appearances DESC
+    
+) AS rank_in_year
+FROM MarvelCharacters
+WHERE year IS NOT NULL 
+    AND YEAR BETWEEN 1939 AND 1945
+    AND appearances IS NOT NULL
+ORDER BY year, rank_in_year;
+
+-- Накопительный итог внутри ОКНА через сумму
+
+SELECT name, align, year, appearances,
+-- Накопительный итога внутри лагеря
+SUM(appearances) OVER (
+    PARTITION BY align
+    ORDER BY Year
+) AS running_align_appearances,
+-- Ранг внутри своего лагеря
+ROW_NUMBER() OVER (
+    PARTITION BY align
+    ORDER BY Year
+) AS rank_in_align
+
+FROM MarvelCharacters
+WHERE align IS NOT NULL
+AND appearances IS NOT NULL 
+AND Year BETWEEN 1939 AND 1945
+ORDER BY align, year;
+
+
+-- LAG и LEAD - позволяют получить значение из предыдущей или следующей строки относительно текущей строки в пределах окна (PARTITION BY и ORDER BY). Эти функции полезны для анализа изменений во времени, сравнения соседних значений и выявления трендов.
+
+SELECT name, appearances, 
+-- Смотрим на имя позади
+LAG(name) OVER (ORDER BY appearances DESC) AS previous_hero,
+-- Смотрим на имя впереди
+LEAD(name) OVER (ORDER BY appearances DESC) AS next_hero
+FROM MarvelCharacters
+WHERE appearances > 500
+ORDER BY appearances DESC;
+
+SELECT 
+    name, 
+    align, 
+    appearances,
+    -- Кто стоит на ступеньку выше ВНУТРИ моего лагеря:
+    LAG(name) OVER (
+        PARTITION BY align 
+        ORDER BY appearances DESC
+    ) AS prev_hero_in_align
+FROM MarvelCharacters
+WHERE appearances > 500
+ORDER BY align, appearances DESC;
