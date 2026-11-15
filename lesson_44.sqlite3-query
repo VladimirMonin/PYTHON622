@@ -1,0 +1,183 @@
+-- database: ../../blog-2.db
+
+SELECT * FROM posts;
+
+-- 01. Что сейчас в базе? Таблица и структура постов
+
+SELECT name FROM sqlite_master WHERE type='table'
+ORDER BY name;
+
+-- Посмотрим структуру posts
+SELECT *
+FROM pragma_table_info('posts');
+
+-- Посмотрим на дубликаты Title
+SELECT title, COUNT(*) AS copies, GROUP_CONCAT(id) AS double_ids
+FROM posts
+GROUP BY title
+HAVING COUNT(*) > 1;
+
+-- Удаляем ID 5
+DELETE FROM posts WHERE id = 5;
+
+-- Смотрим сколько было ID
+SELECT name, seq FROM sqlite_sequence;
+
+INSERT INTO posts (title, content) VALUES ('Проверка ключа', 'Смотрим, какой id выдаст база.');
+SELECT id, title FROM posts ORDER BY id;
+
+---------- 2. Создаем и работаем с новым столбцом статус is_published
+
+-- Удалю столбец is_published, если он есть
+-- ALTER TABLE posts DROP COLUMN is_published;
+ALTER TABLE posts ADD COLUMN is_published INTEGER DEFAULT 0;
+
+SELECT *
+FROM pragma_table_info('posts');
+
+-- Вносим записи ставим опубликовано для постов 1 и 2
+UPDATE posts 
+SET is_published = 1 
+WHERE id IN (1, 2);
+
+SELECT id, title, is_published FROM posts;
+
+-- Удаляем столбец is_published
+-- ALTER TABLE posts DROP COLUMN is_published;
+
+-------- 3. Работа с таблицей категорий
+
+-- Создаем таблицу categories - все названия лежат в этой таблице и это избавляет от потенциальных аномалий при работе с постами и их категориями
+
+
+
+CREATE TABLE IF NOT EXISTS categories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    slug TEXT NOT NULL UNIQUE
+);
+
+INSERT INTO categories (name, slug)
+VALUES 
+    ('Python', 'python'),
+    ('Базы данных', 'databases'),
+    ('Инструменты', 'tools');
+
+SELECT id, name, slug 
+FROM categories 
+ORDER BY id;
+
+-- Добавляем внешний ключ в таблицу с постами - ссылку на категорию, по уаделению выставлять NULL, по обновлению менять на новое значение
+
+ALTER TABLE posts
+ADD COLUMN category_id 
+    INTEGER
+    REFERENCES categories(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE;
+
+-- Смотрю на все свои посты 
+SELECT *
+FROM posts;
+
+
+------ Работа с категориями
+INSERT INTO categories (name, slug)
+VALUES
+    ('Python', 'python'),
+    ('Базы данных', 'databases'),
+    ('Инструменты', 'tools');
+
+-- Проверяю что категории создались (в таблице categories)
+SELECT *
+FROM categories;
+
+
+SELECT *
+FROM posts;
+
+-- Назначаем категории постам
+-- пост 1 - Python, пост 2 - Базы данных, пост 3 - Инструменты
+-- пост 4, 6 - Базы 
+
+UPDATE posts
+SET category_id = 1
+WHERE id = 1;
+
+UPDATE posts
+SET category_id = 2
+WHERE id IN (3, 4, 6);
+
+UPDATE posts
+SET category_id = 3
+WHERE id = 2;
+
+-- Финальная проверка, что все посты получили категории
+SELECT p.id, p.title, c.name AS category_name
+FROM posts p
+LEFT JOIN categories c ON p.category_id = c.id
+ORDER BY p.id;
+
+
+--------- 4. Проверка работы внешнего ключа
+
+-- Давайте попробуем дать посту 6 категорию 66 (которой несуществует) и посмотрим, что будет
+UPDATE posts
+SET category_id = 66
+WHERE id = 6;
+
+-- Отключим проверку внешнего ключа
+PRAGMA foreign_keys = OFF;
+-- проверим статус внешнего ключа проверки (включена или нет)
+PRAGMA foreign_keys;
+
+UPDATE posts
+SET category_id = 66
+WHERE id = 6;
+
+
+SELECT *
+FROM posts;
+
+PRAGMA foreign_keys = ON;
+
+UPDATE posts
+SET category_id = 2
+WHERE id = 6;
+
+---- 5. Базовые выборки с использованием JOIN
+
+-- Все посты с их категориями
+SELECT p.id, p.title, c.name AS category_name
+FROM posts p
+-- Посты могут быть и без категории (тоже покажем)
+LEFT JOIN categories c ON p.category_id = c.id
+ORDER BY p.id;
+
+-- Все посты одной категории (например, Базы данных)
+SELECT p.id, p.title, c.name AS category_name
+FROM posts p
+JOIN categories c ON p.category_id = c.id
+WHERE c.name = 'Базы данных'
+ORDER BY p.id;
+
+-- 6. CUD - создание, обновление, удаление
+
+-- Создать новый пост с категорией Python
+INSERT INTO posts (title, content, category_id)
+VALUES ('Python 3.15 в пути!', 'Кажется это шедевррр!', 1);
+
+-- Обновить пост 7, поменять content
+UPDATE posts
+SET content = 'Кажется это шедевррррр??!'
+WHERE id = 7;
+
+-- поискать все посты про пайтон через LIKE по title и content
+SELECT p.id, p.title, p.content, c.name AS category_name
+FROM posts p
+LEFT JOIN categories c ON p.category_id = c.id
+WHERE p.title LIKE '%Python%' OR p.content LIKE '%Python%'
+ORDER BY p.id;
+
+-- Удалить пост 7
+-- DELETE FROM posts WHERE id = 7;
