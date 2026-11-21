@@ -35,3 +35,9 @@ images/*
 lesson_18.txtd
 lesson_24/lesson_24.log.*
 lesson_27.txt
+
+# Схемы занятий: в репозиторий идут только сами .excalidraw.
+# Python-скрипты сборки схем (diagrams/*.py, lesson_NN/*.py) не коммитим —
+# схемы правятся в редакторе, код для этого не нужен.
+diagrams/**/*.py
+diagrams/**/__pycache__/
