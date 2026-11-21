@@ -1,0 +1,118 @@
+-- database: ./blog-2.db
+
+DROP TABLE IF EXISTS "posts";
+DROP TABLE IF EXISTS "categories";
+
+
+CREATE TABLE categories (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    slug TEXT NOT NULL UNIQUE,
+    description TEXT
+);
+
+-- Запись данных. Поля не указываются потому ...?
+-- Проверим будет ли это работать?
+INSERT INTO categories VALUES(1,'Python','python');
+INSERT INTO categories VALUES(2,'Базы данных','databases');
+INSERT INTO categories VALUES(3,'Инструменты','tools');
+
+INSERT INTO categories (name, slug, description) 
+VALUES
+    ('Python', 'python', 'Все о языке Python'),
+    ('Базы данных', 'databases', 'Все о базах данных'),
+    ('Инструменты', 'tools', 'Разные инструменты для работы');
+
+CREATE TABLE posts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL UNIQUE,
+    slug TEXT NOT NULL UNIQUE,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    likes INTEGER DEFAULT 0,
+    views INTEGER DEFAULT 0,
+    category_id INTEGER NOT NULL,
+    is_published BOOLEAN DEFAULT 0,
+
+    -- Можно объявить внешний ключ прямо в поле через REFERENCES, но лучше вынести его в отдельное объявление.
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+);
+
+
+INSERT INTO posts (title, slug, content, category_id, is_published)
+VALUES
+    ('Первый запуск Python', 'first-run-python', 'Запускаем небольшую программу в терминале', 1, 1),
+    ('Как устроен Git', 'how-git-works', 'Сохраняем изменения проекта по шагам', 3, 1),
+    ('Что такое SQLite', 'what-is-sqlite', 'Храним данные в связанных таблицах', 2, 1),
+    ('Чтение данных из базы', 'reading-data-from-db', 'Учимся задавать вопросы к своим таблицам', 2, 1),
+    ('Проверка ключа', 'key-checking', 'Смотрим, какой id выдаст база.', 2, 0),
+    ('Python 3.15 в пути!', 'python-3-15-coming', 'Кажется это шедевррррр??!', 1, 0);
+
+
+
+-- Таблица hastags - для хранения хэштегов, которые будут использоваться в постах. (Многие ко многим)
+CREATE TABLE hashtags (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE,
+    slug TEXT NOT NULL UNIQUE
+);
+
+
+-- Заполняем теги
+INSERT INTO hashtags (name, slug)
+VALUES
+    ('Python', 'python'),
+    ('Git', 'git'),
+    ('SQLite', 'sqlite'),
+    ('SQL', 'sql'),
+    ('Базы данных', 'databases'),
+    ('Инструменты', 'tools');
+
+-- Сводная таблица для связи постов и хэштегов (многие ко многим)
+CREATE TABLE posts_hashtags (
+    post_id INTEGER NOT NULL,
+    hashtag_id INTEGER NOT NULL,
+    -- Составной первичный ключ - автоматическая проверка уникальности ПАРЫ! и возможность быстро найти запись
+    PRIMARY KEY (post_id, hashtag_id),
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
+    FOREIGN KEY (hashtag_id) REFERENCES hashtags(id) ON DELETE CASCADE
+);
+
+
+INSERT INTO posts_hashtags (post_id, hashtag_id)
+VALUES
+    (1, 1),
+    (1, 6),
+    (2, 2),
+    (2, 6),
+    (3, 3),
+    (3, 4),
+    (4, 4),
+    (5, 4),
+    (5, 5),
+    (6, 1);
+
+
+SELECT posts.id, posts.title, posts.slug, categories.name AS category_name
+FROM posts
+JOIN categories ON posts.category_id = categories.id;
+
+SELECT posts.id, posts.title, posts.slug, hashtags.name AS hashtag_name
+FROM posts
+JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
+JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id;
+
+
+SELECT posts.id, posts.title, posts.slug, GROUP_CONCAT(hashtags.name) AS hashtags
+FROM posts
+JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
+JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
+GROUP BY posts.id;
+
+
+SELECT posts.id, posts.title, posts.slug, categories.name AS category_name, categories.slug AS category_slug, GROUP_CONCAT(hashtags.name) AS hashtags, GROUP_CONCAT(hashtags.slug) AS hashtags_slugs
+FROM posts
+JOIN categories ON posts.category_id = categories.id
+JOIN posts_hashtags ON posts.id = posts_hashtags.post_id
+JOIN hashtags ON posts_hashtags.hashtag_id = hashtags.id
+GROUP BY posts.id;
